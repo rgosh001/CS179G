@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geocoding service</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="floating-panel">
+      <input id="address" type="textbox" value="92501">
+      <input id="submit" type="button" value="Search">
+    </div>
+    <div id="map"></div>
+
+    <script type="text/javascript" language="javascript" src="popDoctorRatio.json"></script>
+    <script>
+    
+    // var geocoder = new google.maps.Geocoder();
+        
+
+    function initMap() {
+
+        //Declare your variables
+        let markers = [],
+            initialLocation = {
+                lat: 33.9997,
+                lng: -117.3675
+            },
+            geocoder = new google.maps.Geocoder(),            
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
+                center: initialLocation,
+            });
+
+        //Read the data object to create your markers
+        $.getJSON('popDoctorRatio.json', function(data) {
+
+            data = data.map((item) => {
+                item = JSON.parse(item) 
+                // markers.push(item) 
+                console.log(data.ZipCode, 'the markers')          
+            })               
+        })
+
+        // var myLatLng = {lat: 33.9997, lng:-117.3675};
+
+        // var map = new google.maps.Map(document.getElementById('map'), {
+        //     zoom: 13,
+        //     center: myLatLng
+        // });
+        
+        var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="firstHeading" class="firstHeading">Information</h1>'+
+            '<div id="bodyContent">'+
+            '<p><b>Population: </b>999,999,999<br>'+
+            '<b>Ratio: </b>999,999,999<br>' +
+            '<b>Number of Doctors: </b>999,999,999</p>'
+            '</div>'+
+            '</div>';
+
+        var infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+
+        var marker = new google.maps.Marker({
+            map: map,
+            title: 'Info',
+            position: initialLocation
+        });
+
+        marker.addListener('click', function() {
+            infowindow.open(map, marker);
+        });
+    
+        document.getElementById('submit').addEventListener('click', function() {
+            geocodeAddress(geocoder, map);
+        });
+    }
+
+    function geocodeAddress(geocoder, resultsMap) {
+            var address = document.getElementById('address').value;
+            geocoder.geocode({'address': address}, function(results, status) {
+            
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                                    map: resultsMap,
+                                    zoom: 3,
+                                    position: results[0].geometry.location
+                                });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+
+            });
+        }
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&callback=initMap">
+    </script>
+  </body>
+</html>
