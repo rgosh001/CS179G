@@ -1,20 +1,3 @@
-<?php
-    $params = "address=" . urlencode($_GET{'addr'});
-    $url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&' . $params;
-    $json = file_get_contents($url);
-    $status = json_decode($json)->status;
-
-    // check for over_query_limit status
-    while ($status=="OVER_QUERY_LIMIT") {
-        sleep(0.2); // seconds
-        $json = file_get_contents($url);
-        $status = json_decode($json)->status;
-    }
-
-    header('application/json');
-    echo $json;
-?>
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -47,97 +30,116 @@
         padding-left: 10px;
       }
     </style>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>-->
   </head>
   <body>
-    <div id="floating-panel">
-      <input id="address" type="textbox" value="92501">
-      <input id="submit" type="button" value="Search">
+    <div id="floating-panel" align="left">
+        <input id="address" type="textbox" value="92501">
+        <input id="submit" type="button" value="Search">
+        <hr>
+        <input type="radio" id="querySelection1" name="group1" value="Milk" checked>
+        <font size="2"> Population to Doctor Ratio Per Zip Code</font><br>
+        <input type="radio" id="querySelection2" name="group1" value="Butter">
+        <font size="2"> Taxonomy Specialty Per Zip Code</font><br>
     </div>
     <div id="map"></div>
 
     <script type="text/javascript" language="javascript" src="popDoctorRatio.json"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>
-    <!--<script src="https://maps.googleapis.com/maps/api/js"></script>-->
-    <div id="map" style="border: 2px solid #3872ac;"></div>
+
     <script>
-        var map;
-        // var icon = "http://path/to/icon.png";
-        // var json = "http://path/to/universities.json";
-        var jsonFile = "popDoctorRatio.json";
-        var infowindow = new google.maps.InfoWindow();
-        function initialize() {
-            var initialLocation = {
+    
+    // var geocoder = new google.maps.Geocoder();
+        
+
+    function initMap() {
+
+        //Declare your variables
+        let markers = [],
+            initialLocation = {
                 lat: 33.9997,
                 lng: -117.3675
-                }
-            var mapProp = {
+            },
+            geocoder = new google.maps.Geocoder(),            
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
                 center: initialLocation,
-                zoom: 3,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
+            });
 
-            map = new google.maps.Map(document.getElementById("map"), mapProp);
-
-            alert('testing');
-            $(document).ready(function() {
-                $.getJSON('popDoctorRatio.json', function(json1) {
-                    json1.map((item) => {
-                        item = JSON.parse(item)
-
-                        var geocoder = new google.maps.Geocoder();
-                        var ZipCode = item.ZipCode;
-                        var address = item.ZipCode;
-                        var lat;
-                        var lng;
-
-                        geocoder.geocode({ 'address': address }, function (results, status) {
-                                if (status == google.maps.GeocoderStatus.OK) {
-                                    // setTimeout(500);
-                                    lat = results[0].geometry.location.lat();
-                                    lng = results[0].geometry.location.lng();
-                                    // alert("Latitude: " + lat + "\nLongitude: " + lng);
-                                    var marker = new google.maps.Marker({
-                                        map: map,
-                                        position: {lat: lat, lng: lng}
-                                    });
-                                    // heatmap = new google.maps.visualization.HeatmapLayer({
-                                    //     location: new google.maps.LatLng(lat, lng),
-                                    //     weight: item.Ratio,
-                                    //     map: map
-                                    //     });
-                                    var details = '<div id="content">'+
-                                        '<div id="siteNotice">'+
-                                        '</div>'+
-                                        '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
-                                        '<div id="bodyContent">'+
-                                        '<p><b>Population: </b>' + item.Pop + '<br>'+
-                                        '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
-                                        '<b>Ratio: </b>' + item.Ratio + '</p>' +
-                                        '</div>'+
-                                        '</div>';
-
-                                    bindInfoWindow(marker, map, infowindow, details);
-                                } else {
-                                    alert('status code: ' + status);
-                                } //end else
-                            }); //end geocoder function
-                });//end map function
-             });
+    
+        document.getElementById('submit').addEventListener('click', function() {
+            if(document.getElementById('querySelection1').checked){
+                geocodeAddress1(geocoder, map);
+            }
+            if(document.getElementById('querySelection2').checked){
+                alert('Haven\'t Setup querySelection2 yet');
+            }
         });
+    }
 
-        function bindInfoWindow(marker, map, infowindow, strDescription) {
-            google.maps.event.addListener(marker, 'click', function () {
-                infowindow.setContent(strDescription);
-                infowindow.open(map, marker);
+    var infowindow = new google.maps.InfoWindow();
+    function geocodeAddress1(geocoder, resultsMap) {
+            var address = document.getElementById('address').value;
+            geocoder.geocode({'address': address}, function(results, status) {
+            
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                                    map: resultsMap,
+                                    zoom: 3,
+                                    position: results[0].geometry.location
+                                });
+                    $(document).ready(function() {
+                        $.getJSON('popDoctorRatio.json', function(json1) {
+                            var found = 0;
+                            console.log('searching JSON for matching zipcode');
+                            json1.map((item) => {
+                                item = JSON.parse(item)
+                                var found = 0;
+                                if(item.ZipCode == address){
+                                    found = 1;
+                                    console.log('found matching zipcode');
+                                    var details = '<div id="content">'+
+                                                    '<div id="siteNotice">'+
+                                                    '</div>'+
+                                                    '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
+                                                    '<div id="bodyContent">'+
+                                                    '<p><b>Population: </b>' + item.Pop + '<br>'+
+                                                    '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
+                                                    '<b>Ratio: </b>' + item.Ratio + '</p>' +
+                                                    '</div>'+
+                                                    '</div>';
+                                    bindInfoWindow(marker, map, infowindow, details);
+                                    exit;
+                                }
+                            });
+                            console.log('finished searching');
+                            if(found == 0){
+                                alert('ZipCode Not There')
+                            }
+                        });
+                    });
+
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+
             });
         }
 
-        google.maps.event.addDomListener(window, 'load', initialize);
+
+    function bindInfoWindow(marker, map, infowindow, strDescription) {
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.setContent(strDescription);
+            infowindow.open(map, marker);
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initMap);
     </script>
     <!--<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&callback=initialize">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&callback=initMap">
     </script>-->
   </body>
 </html>

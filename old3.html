@@ -30,7 +30,7 @@
         padding-left: 10px;
       }
     </style>
-    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
   </head>
   <body>
     <div id="floating-panel">
@@ -46,13 +46,10 @@
     <div id="map" style="border: 2px solid #3872ac;"></div>
     <script>
         var map;
+        // var icon = "http://path/to/icon.png";
+        // var json = "http://path/to/universities.json";
         var jsonFile = "popDoctorRatio.json";
         var infowindow = new google.maps.InfoWindow();
-        var geocoder = new google.maps.Geocoder();
-        var lat;
-        var lng;
-        var count = 0;
-
         function initialize() {
             var initialLocation = {
                 lat: 33.9997,
@@ -65,57 +62,54 @@
             };
 
             map = new google.maps.Map(document.getElementById("map"), mapProp);
-            // alert('starting');
-            // setTimeout(initialize(), 300000);
-            // alert('end 3 seconds');
-            var codeAddress = function(address){
-                lat = "";
-                lng = "";
-                geocoder = new google.maps.Geocoder();
-                geocoder.geocode( { 'address': "USA ,"+ address}, function(results, status) {
-                    if(status == google.maps.GeocoderStatus.OK)
-                    {                    
-                        lat = results[0].geometry.location.lat();
-                        lng = results[0].geometry.location.lng();
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            var marker = new google.maps.Marker({
-                                map: map,
-                                position: {lat: lat, lng: lng}
-                            });
-                            console.log(lat + " " + lng);
-                        } 
-                    }
-                    // if(lat == "" || lng == ""){
-                    //     exit;
-                    // }
-                    
-                    // else {
-                    //     alert("Geocode was not successful for the following reason: " + status);
-                    // }
-                });
-            };
 
+            alert('testing');
             $(document).ready(function() {
                 $.getJSON('popDoctorRatio.json', function(json1) {
                     json1.map((item) => {
                         item = JSON.parse(item)
+
+                        var geocoder = new google.maps.Geocoder();
+                        var ZipCode = item.ZipCode;
                         var address = item.ZipCode;
-                        // console.log(address);
-                        if(count < 20){
-                            codeAddress(address);
-                            count++;
-                        }
-                        if(count >= 20){
-                            setTimeout(function() {
-                                codeAddress(address);
-                                count = 0;
-                                }, 500 );
-                        }
-                        // codeAddress(address);
-                });
+                        var lat;
+                        var lng;
+
+                        geocoder.geocode({ 'address': address }, function (results, status) {
+                                if (status == google.maps.GeocoderStatus.OK) {
+                                    // setTimeout(500);
+                                    lat = results[0].geometry.location.lat();
+                                    lng = results[0].geometry.location.lng();
+                                    // alert("Latitude: " + lat + "\nLongitude: " + lng);
+                                    var marker = new google.maps.Marker({
+                                        map: map,
+                                        position: {lat: lat, lng: lng}
+                                    });
+                                    // heatmap = new google.maps.visualization.HeatmapLayer({
+                                    //     location: new google.maps.LatLng(lat, lng),
+                                    //     weight: item.Ratio,
+                                    //     map: map
+                                    //     });
+                                    var details = '<div id="content">'+
+                                        '<div id="siteNotice">'+
+                                        '</div>'+
+                                        '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
+                                        '<div id="bodyContent">'+
+                                        '<p><b>Population: </b>' + item.Pop + '<br>'+
+                                        '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
+                                        '<b>Ratio: </b>' + item.Ratio + '</p>' +
+                                        '</div>'+
+                                        '</div>';
+
+                                    bindInfoWindow(marker, map, infowindow, details);
+                                } else {
+                                    alert('status code: ' + status);
+                                } //end else
+                            }); //end geocoder function
+                });//end map function
              });
         });
-        };
+
         function bindInfoWindow(marker, map, infowindow, strDescription) {
             google.maps.event.addListener(marker, 'click', function () {
                 infowindow.setContent(strDescription);
