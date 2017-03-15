@@ -520,17 +520,6 @@
             center: initialLocation,
         });
 
-        var heatmapData = [
-            // {location: new google.maps.LatLng(37.95188903808594, -122.77628326416016), weight: 0.6},
-            {location: new google.maps.LatLng(37.95188903808594, -121.77628326416016), weight: 3, radius: 100000}
-            // new google.maps.LatLng(37.95188903808594, -121.77628326416016),
-        ];
-        //"X\":\"-121.77628326416016\",\"Y\":\"37.95188903808594\
-        var heatmap = new google.maps.visualization.HeatmapLayer({
-            data: heatmapData
-        });
-        heatmap.setMap(map);
-
         document.getElementById('submit').addEventListener('click', function() {
             if(document.getElementById('querySelection1').checked){
                 geocodeAddress1(geocoder, map);
@@ -618,6 +607,20 @@
                         });
                         console.log('finished searching providers');
                     });
+
+                    // HeatMap variables and functions to display on map
+                    var heatmapData = [
+                        {location: new google.maps.LatLng(37.95188903808594, -121.77628326416016), weight: 1000000}
+                    ];
+                    var heatmap = new google.maps.visualization.HeatmapLayer({
+                        data: heatmapData,
+                        dissipating: true,
+                        radius: 100,
+                        opacity: 0.7
+
+                    });
+                    heatmap.setMap(map);
+
                 });
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);
