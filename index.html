@@ -498,7 +498,9 @@
 
     <script type="text/javascript" language="javascript" src="popDoctorRatio.json"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>
+    <script type="text/javascript" 
+        src="https://maps.googleapis.com/maps/api/js?v=3&amp;key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>-->
 
     <script>
     
@@ -534,7 +536,7 @@
     function geocodeAddress2(geocoder, resultsMap) {
         var address = document.getElementById('address').value;
         var specialty = document.getElementById('specialty').value;
-        alert('ZipCode: ' + address + '\nSpecialty: ' + specialty);
+        // alert('ZipCode: ' + address + '\nSpecialty: ' + specialty);
         geocoder.geocode({'address': address}, function(results, status) {
             if (status === 'OK') {
                 resultsMap.setCenter(results[0].geometry.location);
@@ -556,7 +558,8 @@
                                 var details = '<div id="content">'+
                                                 '<div id="siteNotice">'+
                                                 '</div>'+
-                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'
+                                                +
                                                 '<div id="bodyContent">'+
                                                 '<p><b>Population: </b>' + item.Pop + '<br>'+
                                                 '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
@@ -572,8 +575,41 @@
                             alert('ZipCode Not There')
                         }
                     });
+                    $.getJSON('taxonomyCountHospital.json', function(json1) {
+                        // alert('searching JSON for matching Hospitals');
+                        // alert('ZipCode: ' + address + '\nSpecialty: ' + specialty);
+                        json1.map((item) => {
+                            item = JSON.parse(item)
+                            if(address == item.ZipCode && specialty == item.TaxonomyCode1){
+                                alert('lat: ' + item.Y + ' lng: ' + item.X + '\n' + item.TaxonomyCode1);
+                                // var provLat = JSON.stringify(item.X);
+                                // var provLng = JSON.stringify(item.Y);
+                                // alert(parseFloat(item.X.substring(0,9)) + ' ' + parseFloat(item.Y.substring(0,7)));
+                                var marker = new google.maps.Marker({
+                                    map: resultsMap,
+                                    zoom: 3,
+                                    position: {lat: parseFloat(item.Y.substring(0,7)), lng: parseFloat(item.X.substring(0,9))}
+                                });
+                                // newmarker.setMap(resultsMap);
+                                // console.log('found matching provider in zipcode');
+                                var details = '<div id="content">'+
+                                                '<div id="siteNotice">'+
+                                                '</div>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Hospital Name: ' + item.HospitalName + '</h3>'+
+                                                '<div id="bodyContent">'+
+                                                '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'
+                                                // +
+                                                // '<b>Address: </b>' + item.NumberOfDoctors + '<br>' +
+                                                // '<b>Ratio: </b>' + item.Ratio + '</p>' +
+                                                // '</div>'+
+                                                // '</div>';
+                                bindInfoWindow(marker, map, infowindow, details);
+                                // exit;
+                            }
+                        });
+                        console.log('finished searching providers');
+                    });
                 });
-
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);
             }
