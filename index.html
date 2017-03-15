@@ -576,6 +576,8 @@
                             alert('ZipCode Not There')
                         }
                     });
+
+                    var heatmapData = [];
                     $.getJSON('taxonomyCountHospital.json', function(json1) {
                         json1.map((item) => {
                             item = JSON.parse(item)
@@ -584,7 +586,7 @@
                                 var marker = new google.maps.Marker({
                                     map: resultsMap,
                                     zoom: 3,
-                                    position: {lat: parseFloat(item.Y.substring(0,7)), lng: parseFloat(item.X.substring(0,9))}
+                                    position: {lat: parseFloat(item.Y), lng: parseFloat(item.X)}
                                 });
                                 var details = '<div id="content">'+
                                                 '<div id="siteNotice">'+
@@ -593,15 +595,21 @@
                                                 '<div id="bodyContent">'+
                                                 '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'
                                 
-                                //add found hospital to heatmap array to load
-                                // heatmapData.push('{location: new google.maps.LatLng(' + parseFloat(item.Y.substring(0,7)) +
-                                // ', ' + parseFloat(item.X.substring(0,9)) + '), weight: ' + item.Count + '}');
-
-                                // var heatmap = new google.maps.visualization.HeatmapLayer({
-                                // data: heatmapData
-                                // });
-                                // heatmap.setMap(resultsMap);
                                 bindInfoWindow(marker, resultsMap, infowindow, details);
+
+
+                                // var heatmapData = [
+                                //     new google.maps.LatLng(item.Y, item.X)
+                                // ];
+                                heatmapData.push( {location: new google.maps.LatLng(item.Y, item.X), weight: item.Count} );
+                                var heatmap = new google.maps.visualization.HeatmapLayer({
+                                    data: heatmapData,
+                                    dissipating: true,
+                                    radius: item.Count * 15,
+                                    opacity: 0.7
+                                });
+                                
+                                heatmap.setMap(resultsMap);
                                 // exit;
                             }
                         });
@@ -609,17 +617,16 @@
                     });
 
                     // HeatMap variables and functions to display on map
-                    var heatmapData = [
-                        {location: new google.maps.LatLng(37.95188903808594, -121.77628326416016), weight: 1000000}
-                    ];
-                    var heatmap = new google.maps.visualization.HeatmapLayer({
-                        data: heatmapData,
-                        dissipating: true,
-                        radius: 100,
-                        opacity: 0.7
-
-                    });
-                    heatmap.setMap(map);
+                    // var heatmapData = [
+                    //     new google.maps.LatLng(37.95188903808594, -121.77628326416016)
+                    // ];
+                    // var heatmap = new google.maps.visualization.HeatmapLayer({
+                    //     data: heatmapData,
+                    //     dissipating: true,
+                    //     radius: 100,
+                    //     opacity: 0.7
+                    // });
+                    // heatmap.setMap(resultsMap);
 
                 });
             } else {
