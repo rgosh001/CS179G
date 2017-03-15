@@ -554,13 +554,13 @@
                 $(document).ready(function() {
                     $.getJSON('popDoctorRatio.json', function(json1) {
                         var found = 0;
-                        console.log('searching JSON for matching zipcode');
+                        // console.log('searching JSON for matching zipcode');
                         json1.map((item) => {
                             item = JSON.parse(item)
                             var found = 0;
                             if(item.ZipCode == address){
                                 found = 1;
-                                console.log('found matching zipcode');
+                                // console.log('found matching zipcode');
                                 var details = '<div id="content">'+
                                                 '<div id="siteNotice">'+
                                                 '</div>'+
@@ -576,7 +576,7 @@
                                 exit;
                             }
                         });
-                        console.log('finished searching');
+                        // console.log('finished searching');
                         if(found == 0){
                             alert('No Hospital(s) In Provided Dataset');
                             var details = '<div id="content">'+
@@ -615,7 +615,7 @@
                                 heatmapData.push( {location: new google.maps.LatLng(item.Y, item.X), weight: item.Ratio} );
                             }
                         });
-                        console.log('finished searching providers');
+                        // console.log('finished searching providers');
                         heatmap = new google.maps.visualization.HeatmapLayer({
                             data: heatmapData,
                             // maxIntensity: '50px',
@@ -681,13 +681,13 @@
 
                         if(found != 0){
                             $.getJSON('taxonomyCount.json', function(json1) {
-                                console.log('searching JSON for matching zipcode');
+                                // console.log('searching JSON for matching zipcode');
                                 json1.map((item) => {
                                     item = JSON.parse(item)
                                     var tempZip = item.ZipCode;
                                     if( address == tempZip.substring(0,5) && specialty == item.TaxonomyCode1 ){
                                         found = 1;
-                                        console.log('found matching zipcode');
+                                        // console.log('found matching zipcode');
                                         var details = '<div id="content">'+
                                                         '<div id="siteNotice">'+
                                                         '</div>'+
@@ -709,7 +709,7 @@
                             });
                         } else {
                             $.getJSON('taxonomyCount.json', function(json1) {
-                                console.log('searching JSON for matching zipcode');
+                                // console.log('searching JSON for matching zipcode');
                                 var details = '<div id="content">'+
                                                 '<div id="siteNotice">'+
                                                 '</div>'+
@@ -752,7 +752,7 @@
                         //     exit;
                         // }
                         // alert('2found val: '+found);
-                        console.log('finished searching providers');
+                        // console.log('finished searching providers');
                         heatmap = new google.maps.visualization.HeatmapLayer({
                             data: heatmapData,
                             // maxIntensity: '50px',
