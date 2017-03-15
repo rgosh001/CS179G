@@ -578,8 +578,14 @@
                         });
                         console.log('finished searching');
                         if(found == 0){
+                            alert('No Hospital(s) In Provided Dataset');
+                            var details = '<div id="content">'+
+                                            '<div id="siteNotice">'+
+                                            '</div>'+
+                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                            '<div id="bodyContent">';
+                            bindInfoWindow(marker, resultsMap, infowindow, details);
                             markers.push(marker);
-                            alert('No Hospital In Provided Dataset');
                         }
                     });
 
@@ -631,6 +637,7 @@
         });
     }
     function geocodeAddress2(geocoder, resultsMap) {
+        var found = 0;
         heatmap.setMap(heatmap.getMap() ? null : resultsMap);
         for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(null);
@@ -647,15 +654,13 @@
                             });
                 markers.push(marker);
                 $(document).ready(function() {
-                    var found = 0;
 
                     heatmapData = [];
                     $.getJSON('taxonomyCountHospital.json', function(json1) {
-                        var found = 0;
                         json1.map((item) => {
                             item = JSON.parse(item)
                             if(address == item.ZipCode && specialty == item.TaxonomyCode1){
-                                found = 1
+                                found = 1;
                                 var marker = new google.maps.Marker({
                                     map: resultsMap,
                                     zoom: 3,
@@ -668,16 +673,85 @@
                                                 '<div id="bodyContent">'+
                                                 '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'+
                                                 '<b>Number of Doctors: </b>' + item.Count
-                                
                                 bindInfoWindow(marker, resultsMap, infowindow, details);
                                 markers.push(marker);
                                 heatmapData.push( {location: new google.maps.LatLng(item.Y, item.X), weight: item.Count} );
                             }
                         });
+
+                        if(found != 0){
+                            $.getJSON('taxonomyCount.json', function(json1) {
+                                console.log('searching JSON for matching zipcode');
+                                json1.map((item) => {
+                                    item = JSON.parse(item)
+                                    var tempZip = item.ZipCode;
+                                    if( address == tempZip.substring(0,5) && specialty == item.TaxonomyCode1 ){
+                                        found = 1;
+                                        console.log('found matching zipcode');
+                                        var details = '<div id="content">'+
+                                                        '<div id="siteNotice">'+
+                                                        '</div>'+
+                                                        '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                                        '<div id="bodyContent">'+
+                                                        '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'+
+                                                        '<b>Number of Doctors: </b>' + item.Count;
+                                        bindInfoWindow(marker, map, infowindow, details);
+                                        markers.push(marker);
+                                        // exit;
+                                    }
+                                });
+                                // console.log('finished searching');
+                                // if(found == 0){
+                                //     markers.push(marker);
+                                //     alert('No Specialist(s) In Provided Zip Code');
+                                //     exit;
+                                // }
+                            });
+                        } else {
+                            $.getJSON('taxonomyCount.json', function(json1) {
+                                console.log('searching JSON for matching zipcode');
+                                var details = '<div id="content">'+
+                                                '<div id="siteNotice">'+
+                                                '</div>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                                '<div id="bodyContent">' +
+                                                '<p><b>Specialty: </b>' + specialty;
+                                                // '<b>Number of Doctors: </b>' + item.Count;
+                                bindInfoWindow(marker, map, infowindow, details);
+                                markers.push(marker);
+                                // json1.map((item) => {
+                                //     item = JSON.parse(item)
+                                //     var tempZip = item.ZipCode;
+                                //     if( address == tempZip.substring(0,5) && specialty == item.TaxonomyCode1 ){
+                                //         found = 1;
+                                //         console.log('found matching zipcode');
+                                //         var details = '<div id="content">'+
+                                //                         '<div id="siteNotice">'+
+                                //                         '</div>'+
+                                //                         '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                //                         '<div id="bodyContent">' +
+                                //                         '<p><b>Specialty: </b>' + item.TaxonomyCode1;
+                                //                         // '<b>Number of Doctors: </b>' + item.Count;
+                                //         bindInfoWindow(marker, map, infowindow, details);
+                                //         markers.push(marker);
+                                //         // exit;
+                                //     }
+                                // });
+                                // console.log('finished searching');
+                                // if(found == 0){
+                                //     markers.push(marker);
+                                //     alert('No Specialist(s) In Provided Zip Code');
+                                //     exit;
+                                // }
+                            });
+                            alert('No Specialist(s) In Provided Zip Code');
+                        }
+                        // // alert('1found val: '+found);
                         // if(found == 0){
                         //     alert('No Specialist In Provided Zip Code');
                         //     exit;
                         // }
+                        // alert('2found val: '+found);
                         console.log('finished searching providers');
                         heatmap = new google.maps.visualization.HeatmapLayer({
                             data: heatmapData,
@@ -686,69 +760,9 @@
                             radius: 100,
                             opacity: 0.7
                         });
+                        // alert('3found val: '+found);
                         heatmap.setMap(resultsMap);
                     });
-
-                    if(found != 0){
-                        $.getJSON('taxonomyCount.json', function(json1) {
-                            console.log('searching JSON for matching zipcode');
-                            json1.map((item) => {
-                                item = JSON.parse(item)
-                                var tempZip = item.ZipCode;
-                                if( address == tempZip.substring(0,5) && specialty == item.TaxonomyCode1 ){
-                                    found = 1;
-                                    console.log('found matching zipcode');
-                                    var details = '<div id="content">'+
-                                                    '<div id="siteNotice">'+
-                                                    '</div>'+
-                                                    '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
-                                                    '<div id="bodyContent">'+
-                                                    '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'+
-                                                    '<b>Number of Doctors: </b>' + item.Count;
-                                    bindInfoWindow(marker, map, infowindow, details);
-                                    // exit;
-                                }
-                            });
-                            console.log('finished searching');
-                            if(found == 0){
-                                markers.push(marker);
-                                alert('No Specialist In Provided Zip Code');
-                                exit;
-                            }
-                        });
-                    } else {
-                         $.getJSON('taxonomyCount.json', function(json1) {
-                            console.log('searching JSON for matching zipcode');
-                            json1.map((item) => {
-                                item = JSON.parse(item)
-                                var tempZip = item.ZipCode;
-                                if( address == tempZip.substring(0,5) && specialty == item.TaxonomyCode1 ){
-                                    found = 1;
-                                    console.log('found matching zipcode');
-                                    var details = '<div id="content">'+
-                                                    '<div id="siteNotice">'+
-                                                    '</div>'+
-                                                    '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
-                                                    '<div id="bodyContent">' +
-                                                    '<p><b>Specialty: </b>' + item.TaxonomyCode1;
-                                                    // '<b>Number of Doctors: </b>' + item.Count;
-                                    bindInfoWindow(marker, map, infowindow, details);
-                                    // exit;
-                                }
-                            });
-                            console.log('finished searching');
-                            if(found == 0){
-                                markers.push(marker);
-                                alert('No Specialist In Provided Zip Code');
-                                exit;
-                            }
-                        });
-                        alert('No Specialist In Provided Zip Code');
-                    }
-
-                    
-
-                    
                 });
             } else if(specialty == "" | address == "") {
                 alert('Please Have Zip Code AND Specialty Selected From Search Menu');
