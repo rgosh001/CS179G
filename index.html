@@ -578,6 +578,7 @@
                         });
                         console.log('finished searching');
                         if(found == 0){
+                            markers.push(marker);
                             alert('No Hospital In Provided Dataset');
                         }
                     });
@@ -646,8 +647,8 @@
                             });
                 markers.push(marker);
                 $(document).ready(function() {
+                    var found = 0;
                     $.getJSON('taxonomyCount.json', function(json1) {
-                        var found = 0;
                         console.log('searching JSON for matching zipcode');
                         json1.map((item) => {
                             item = JSON.parse(item)
@@ -663,20 +664,24 @@
                                                 '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'+
                                                 '<b>Number of Doctors: </b>' + item.Count;
                                 bindInfoWindow(marker, map, infowindow, details);
-                                exit;
+                                // exit;
                             }
                         });
-                        console.log('finished searching');
-                        if(found == 0){
-                            alert('No Specialist In Provided ZipCode')
-                        }
                     });
+
+                    console.log('finished searching');
+                    if(found == 0){
+                        markers.push(marker);
+                        alert('No Specialist In Provided Zip Code');
+                    }
 
                     heatmapData = [];
                     $.getJSON('taxonomyCountHospital.json', function(json1) {
+                        var found = 0;
                         json1.map((item) => {
                             item = JSON.parse(item)
                             if(address == item.ZipCode && specialty == item.TaxonomyCode1){
+                                found = 1
                                 var marker = new google.maps.Marker({
                                     map: resultsMap,
                                     zoom: 3,
@@ -695,6 +700,9 @@
                                 heatmapData.push( {location: new google.maps.LatLng(item.Y, item.X), weight: item.Count} );
                             }
                         });
+                        if(found == 0){
+                            alert('No Specialist In Provided Zip Code');
+                        }
                         console.log('finished searching providers');
                         heatmap = new google.maps.visualization.HeatmapLayer({
                             data: heatmapData,
