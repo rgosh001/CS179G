@@ -506,7 +506,7 @@
     
     // var geocoder = new google.maps.Geocoder();
         
-
+    var markers;
     function initMap() {
 
         //Declare your variables
@@ -545,6 +545,7 @@
                                 zoom: 3,
                                 position: results[0].geometry.location
                             });
+                // markers.push(marker);
                 $(document).ready(function() {
                     $.getJSON('popDoctorRatio.json', function(json1) {
                         var found = 0;
