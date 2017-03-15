@@ -505,7 +505,6 @@
     <script>
     
     // var geocoder = new google.maps.Geocoder();
-        
     var markers;
     function initMap() {
 
@@ -515,13 +514,23 @@
                 lat: 33.9997,
                 lng: -117.3675
             },
-            geocoder = new google.maps.Geocoder(),            
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 13,
-                center: initialLocation,
-            });
+        geocoder = new google.maps.Geocoder(),            
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 13,
+            center: initialLocation,
+        });
 
-    
+        var heatmapData = [
+            // {location: new google.maps.LatLng(37.95188903808594, -122.77628326416016), weight: 0.6},
+            {location: new google.maps.LatLng(37.95188903808594, -121.77628326416016), weight: 3, radius: 100000}
+            // new google.maps.LatLng(37.95188903808594, -121.77628326416016),
+        ];
+        //"X\":\"-121.77628326416016\",\"Y\":\"37.95188903808594\
+        var heatmap = new google.maps.visualization.HeatmapLayer({
+            data: heatmapData
+        });
+        heatmap.setMap(map);
+
         document.getElementById('submit').addEventListener('click', function() {
             if(document.getElementById('querySelection1').checked){
                 geocodeAddress1(geocoder, map);
@@ -535,7 +544,6 @@
     var infowindow = new google.maps.InfoWindow();
 
 
-    var heatMapData = [];
 
     function geocodeAddress2(geocoder, resultsMap) {
         var address = document.getElementById('address').value;
@@ -597,15 +605,14 @@
                                                 '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'
                                 
                                 //add found hospital to heatmap array to load
-                                heatMapData.push('{location: new google.maps.LatLng(' + parseFloat(item.Y.substring(0,7)) +
-                                ', ' + parseFloat(item.X.substring(0,9)) + '), weight: ' + item.Count + '}');
-                                
-                                var heatmap = new google.maps.visualization.HeatmapLayer({
-                                    data: heatMapData
-                                });
-                                heatmap.setMap(resultsMap);
+                                // heatmapData.push('{location: new google.maps.LatLng(' + parseFloat(item.Y.substring(0,7)) +
+                                // ', ' + parseFloat(item.X.substring(0,9)) + '), weight: ' + item.Count + '}');
 
-                                bindInfoWindow(marker, map, infowindow, details);
+                                // var heatmap = new google.maps.visualization.HeatmapLayer({
+                                // data: heatmapData
+                                // });
+                                // heatmap.setMap(resultsMap);
+                                bindInfoWindow(marker, resultsMap, infowindow, details);
                                 // exit;
                             }
                         });
