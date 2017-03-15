@@ -17,13 +17,15 @@
         padding: 0;
       }
       #floating-panel {
+        float: left;
         position: absolute;
         top: 10px;
-        left: 25%;
+        /*left: 25%;*/
+        top: 10%;
         z-index: 5;
         background-color: #fff;
         padding: 5px;
-        border: 1px solid #999;
+        border: 5px solid #999;
         text-align: left;
         font-family: 'Roboto','sans-serif';
         line-height: 30px;
@@ -483,6 +485,11 @@
         <option value = "Health Educator">
     </datalist>
     <div id="floating-panel" align="left">
+        <img src="https://cdn.d1baseball.com/logos/teams/256/ucriver.png" width=90% height=90%>
+        <br>
+
+        <b><font size="3">Hospitals and Providers Heatmap</font></b><br>
+
         <input id="address" type="textbox" placeholder="Enter ZipCode">
         <input id="submit" type="button" value="Search"><br>
         <input id="specialty" type="textbox" placeholder="Specialty" list="specialtyList" >
@@ -492,7 +499,6 @@
         <font size="2"> Population to Doctor Ratio Per Zip Code</font><br>
         <input type="radio" id="querySelection2" name="group1" value="Butter">
         <font size="2"> Taxonomy Specialty Per Zip Code</font><br>
-
     </div>
     <div id="map"></div>
 
@@ -503,8 +509,6 @@
     <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>-->
 
     <script>
-    
-    
     var markers = [];
     var heatmap = new google.maps.visualization.HeatmapLayer();
     var heatmapData = [];
