@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Geocoding service</title>
+    <title>UCR Hospitals and Providers HeatMap</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
@@ -514,6 +514,24 @@
     var heatmap = new google.maps.visualization.HeatmapLayer();
     var heatmapData = [];
     function initMap() {
+        $("#specialty").hide();
+        $("#querySelection2").click(function() {
+            $("#specialty").show()
+        });
+        $("#querySelection1").click(function() {
+            $("#specialty").hide()
+        });
+
+        $('address').keypress(function(e){
+            if(e.keyCode == 13){
+                $('submit').click();
+            }
+        });
+        $('specialty').keypress(function(e){
+            if(e.keyCode == 13){
+                $('submit').click();
+            }
+        });
 
         //Declare your variables
         let markers = [],
