@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UCR Hospitals and Providers HeatMap</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        float: left;
+        position: absolute;
+        top: 10px;
+        /*left: 25%;*/
+        top: 8%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 2px solid #999;
+        text-align: left;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    </style>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>-->
+  </head>
+  <body>
+    <datalist id="specialtyList">
+        <option value = "Pharmacotherapy">
+        <option value = "Specialist/Technologist Cardiovascular">
+        <option value = "Reproductive Endocrinology/Infertility">
+        <option value = "Pediatric Dentistry ">
+        <option value = "Rehabilitation Practitioner">
+        <option value = "Oral & Maxillofacial Surgery">
+        <option value = "Physical Medicine & Rehabilitation">
+        <option value = "Emergency Care">
+        <option value = "Pediatric Endocrinology">
+        <option value = "Clinical & Laboratory Dermatological Immunology">
+        <option value = "Gynecology">
+        <option value = "Surgery of the Hand">
+        <option value = "Immunology">
+        <option value = "Vascular Neurology">
+        <option value = "Foot Surgery">
+        <option value = "Low Vision Rehabilitation">
+        <option value = "Cytopathology">
+        <option value = "Surgical">
+        <option value = "Clinical Laboratory Director">
+        <option value = "Medical Technologist">
+        <option value = "Personal Care Attendant">
+        <option value = "Mastectomy Fitter">
+        <option value = "Occupational Therapy Assistant">
+        <option value = "Military Health Care Provider">
+        <option value = "Pulmonary Diagnostics">
+        <option value = "Naturopath">
+        <option value = "Internist">
+        <option value = "Cardiovascular-Interventional Technology">
+        <option value = "Professional">
+        <option value = "Interventional Cardiology">
+        <option value = "Medical Oncology">
+        <option value = "Undersea and Hyperbaric Medicine ">
+        <option value = "Electrodiagnostic Medicine">
+        <option value = "Radiology Practitioner Assistant">
+        <option value = "Gerontology">
+        <option value = "Hospice and Palliative Medicine">
+        <option value = "Audiologist-Hearing Aid Fitter">
+        <option value = "Occupational Medicine">
+        <option value = "Clinical Biochemical Genetics">
+        <option value = "Dental Therapist">
+        <option value = "Psychiatric/Mental Health">
+        <option value = "Vascular & Interventional Radiology">
+        <option value = "Speech-Language Assistant">
+        <option value = "Gynecologic Oncology">
+        <option value = "Otolaryngic Allergy">
+        <option value = "Plastic Surgery Within the Head and Neck">
+        <option value = "Bone Densitometry">
+        <option value = "Dental Hygienist">
+        <option value = "Vision Therapy">
+        <option value = "Optician">
+        <option value = "Geneticist">
+        <option value = "Hypertension Specialist">
+        <option value = "Rehabilitation Counselor">
+        <option value = "Clinical Exercise Physiologist">
+        <option value = "Adult Health">
+        <option value = "Rheumatology">
+        <option value = "Neuromusculoskeletal Medicine">
+        <option value = "Day Training/Habilitation Specialist">
+        <option value = "Neurological Surgery">
+        <option value = "Home Health">
+        <option value = "Pediatric Infectious Diseases">
+        <option value = "Dental Laboratory Technician">
+        <option value = "Vascular Sonography">
+        <option value = "Geriatric Psychiatry">
+        <option value = "Diagnostic Neuroimaging">
+        <option value = "Psychoanalyst">
+        <option value = "Radiography">
+        <option value = "TX">
+        <option value = "Cardiovascular Disease">
+        <option value = "Urology">
+        <option value = "Clinical Molecular Genetics">
+        <option value = "Licensed Vocational Nurse">
+        <option value = "Pulmonary Rehabilitation">
+        <option value = "Pulmonary Function Technologist">
+        <option value = "Nuclear Medicine Technology">
+        <option value = "Exercise & Sports">
+        <option value = "Adult Medicine">
+        <option value = "Orthotic Fitter">
+        <option value = "Prescribing (Medical)">
+        <option value = "Histology">
+        <option value = "Facial Plastic Surgery">
+        <option value = "Educational">
+        <option value = "Pediatric Allergy/Immunology">
+        <option value = "Adolescent Medicine">
+        <option value = "Feeding">
+        <option value = "Female Pelvic Medicine and Reconstructive Surgery">
+        <option value = "Family Medicine">
+        <option value = "Chore Provider">
+        <option value = "Driving and Community Mobility">
+        <option value = "Women's Health Care">
+        <option value = "Doula">
+        <option value = "Counselor">
+        <option value = "Reproductive Endocrinology">
+        <option value = "Interpreter">
+        <option value = "Pediatric Critical Care Medicine">
+        <option value = "Specialist/Technologist">
+        <option value = "Pediatric Nephrology">
+        <option value = "Community Health">
+        <option value = "Administrator">
+        <option value = "Nuclear Medicine">
+        <option value = "Pediatric Cardiology">
+        <option value = "Adult Development & Aging">
+        <option value = "Nuclear Cardiology">
+        <option value = "Pediatric Radiology">
+        <option value = "Interventional Pain Medicine">
+        <option value = "Orthoptist">
+        <option value = "Occupational Therapist">
+        <option value = "Specialist">
+        <option value = "Nephrology">
+        <option value = "Orthopedic">
+        <option value = "Addiction Psychiatry">
+        <option value = "Pediatric Emergency Medicine">
+        <option value = "Pediatric Dermatology">
+        <option value = "Trauma Surgery">
+        <option value = "Nuclear">
+        <option value = "Otolaryngology">
+        <option value = "Periodontics">
+        <option value = "Phlebotomy">
+        <option value = "Independent Medical Examiner">
+        <option value = "Home Modifications">
+        <option value = "Hematology & Oncology">
+        <option value = "Clinical Nurse Specialist">
+        <option value = "Community Health/Public Health">
+        <option value = "OH">
+        <option value = "Clinical Neurophysiology ">
+        <option value = "Orientation and Mobility Training Provider">
+        <option value = "Student in an Organized Health Care Education/Training Program">
+        <option value = "Family">
+        <option value = "Neuropathology">
+        <option value = "Corneal and Contact Management">
+        <option value = "Pediatric Urology">
+        <option value = "Assistant">
+        <option value = "Orthodontics and Dentofacial Orthopedics">
+        <option value = "Electroneurodiagnostic">
+        <option value = "Veterinarian">
+        <option value = "Behavioral Neurology & Neuropsychiatry">
+        <option value = "Molecular Genetic Pathology">
+        <option value = "Optometric Technician">
+        <option value = "Clinical Child & Adolescent">
+        <option value = "Preventive Medicine/Occupational Environmental Medicine">
+        <option value = "Primary Care">
+        <option value = "Bariatric Medicine">
+        <option value = "Obstetric">
+        <option value = "Psychiatry">
+        <option value = "Medical Microbiology">
+        <option value = "Contact Lens Fitter">
+        <option value = "Sports Physician">
+        <option value = "Women's Health">
+        <option value = "Clinical Ethicist">
+        <option value = "Forensic Psychiatry">
+        <option value = "Pediatrics">
+        <option value = "Pediatric Pulmonology">
+        <option value = "Ocularist">
+        <option value = "Hearing Instrument Specialist">
+        <option value = "Emergency Medical Services">
+        <option value = "Health">
+        <option value = "Biostatistician">
+        <option value = "Licensed Practical Nurse">
+        <option value = "Infectious Disease">
+        <option value = "Neurodevelopmental Disabilities">
+        <option value = "Allergy">
+        <option value = "Plastic Surgery within the Head & Neck">
+        <option value = "Clinical & Laboratory Immunology">
+        <option value = "Critical Care">
+        <option value = "Occupational Vision">
+        <option value = "Pediatric Hematology-Oncology">
+        <option value = "Clinical Pathology">
+        <option value = "Chemistry">
+        <option value = "Ophthalmology">
+        <option value = "Forensic">
+        <option value = "Pediatric Rheumatology">
+        <option value = "F">
+        <option value = "Lactation Consultant">
+        <option value = "Diagnostic Ultrasound ">
+        <option value = "Nurse Practitioner">
+        <option value = "Dentist">
+        <option value = "Rehabilitation">
+        <option value = "Chemical Pathology">
+        <option value = "Art">
+        <option value = "Psychologist">
+        <option value = "Massage Therapist">
+        <option value = "Internal Medicine">
+        <option value = "M">
+        <option value = "Nuclear Imaging & Therapy">
+        <option value = "Medical Toxicology">
+        <option value = "Dietitian">
+        <option value = "Maternal Newborn">
+        <option value = "Dental Public Health">
+        <option value = "EEG">
+        <option value = "Geriatric Medicine">
+        <option value = "Maternal & Fetal Medicine">
+        <option value = "Diabetes Educator">
+        <option value = "Infection Control">
+        <option value = "Contact Lens">
+        <option value = "Clinical Genetics (M.D.)">
+        <option value = "Environmental Modification ">
+        <option value = "Medical-Surgical">
+        <option value = "Emergency Medical Technician">
+        <option value = "Procedural Dermatology">
+        <option value = "Neurology with Special Qualifications in Child Neurology ">
+        <option value = "Ergonomics">
+        <option value = "Pediatric Chiropractor">
+        <option value = "Homeopath">
+        <option value = "Magnetic Resonance Imaging ">
+        <option value = "CO">
+        <option value = "In Vivo & In Vitro Nuclear Medicine">
+        <option value = "Otorhinolaryngology & Head-Neck">
+        <option value = "Physical Therapy Assistant">
+        <option value = "Otology & Neurotology">
+        <option value = "Wound Care">
+        <option value = "Thermography">
+        <option value = "Dentist Anesthesiologist">
+        <option value = "Assistant Record Technician">
+        <option value = "Vascular Surgery">
+        <option value = "Adult Reconstructive Orthopaedic Surgery">
+        <option value = "Perioperative">
+        <option value = "Computed Tomography">
+        <option value = "Clinical Pharmacology">
+        <option value = "Developmental ? Behavioral Pediatrics">
+        <option value = "Oral and Maxillofacial Radiology">
+        <option value = "Nurse Massage Therapist (NMT)">
+        <option value = "Orthopaedic Surgery">
+        <option value = "Contractor">
+        <option value = "Assistive Technology Supplier">
+        <option value = "Cardiac Rehabilitation">
+        <option value = "Radiology">
+        <option value = "Genetic Counselor">
+        <option value = "Naprapath">
+        <option value = "Speech-Language Pathologist">
+        <option value = "Audiologist">
+        <option value = "Nutritionist">
+        <option value = "Infusion Therapy">
+        <option value = "Dance Therapist">
+        <option value = "Orthopaedic Surgery of the Spine">
+        <option value = "Orthotist">
+        <option value = "Denturist">
+        <option value = "Vascular Specialist">
+        <option value = "Dialysis">
+        <option value = "Counseling">
+        <option value = "Perinatal">
+        <option value = "Hepatology">
+        <option value = "Family Health">
+        <option value = "Sports">
+        <option value = "Audiology Assistant">
+        <option value = "Critical Care Medicine">
+        <option value = "Vascular-Interventional Technology">
+        <option value = "Emergency Medicine">
+        <option value = "Psychiatric">
+        <option value = "Case Manager/Care Coordinator">
+        <option value = "Public Health & General Preventive Medicine">
+        <option value = "Health Service">
+        <option value = "Clinical Cytogenetic">
+        <option value = "Cardiopulmonary">
+        <option value = "Pedorthist">
+        <option value = "Nutrition Support">
+        <option value = "Continence Care">
+        <option value = "Podiatrist">
+        <option value = "Undersea and Hyperbaric Medicine">
+        <option value = "Foot & Ankle Surgery">
+        <option value = "Radiologic Technologist">
+        <option value = "Continuing Education/Staff Development">
+        <option value = "Driver">
+        <option value = "Child & Adolescent Psychiatry">
+        <option value = "Art Therapist">
+        <option value = "Neonatal">
+        <option value = "Pediatric Orthopaedic Surgery">
+        <option value = "Biomedical Engineering">
+        <option value = "Acute Care">
+        <option value = "College Health">
+        <option value = "Research Data Abstracter/Coder">
+        <option value = "Geriatrics">
+        <option value = "Pharmacy Technician">
+        <option value = "MOHS-Micrographic Surgery">
+        <option value = "Immunopathology">
+        <option value = "Neonatal-Perinatal Medicine">
+        <option value = "Pain Medicine">
+        <option value = "Endocrinology">
+        <option value = "Clinical Pathology/Laboratory Medicine">
+        <option value = "Pain Management">
+        <option value = "Technician">
+        <option value = "Licensed Psychiatric Technician">
+        <option value = "Home Health Aide">
+        <option value = "Low Vision">
+        <option value = "Pediatric Pathology">
+        <option value = "Coding Specialist">
+        <option value = "Nutrition">
+        <option value = "Pediatric Rehabilitation Medicine">
+        <option value = "Social Worker">
+        <option value = "Anatomic Pathology">
+        <option value = "Anesthesiologist Assistant">
+        <option value = "Emergency">
+        <option value = "Human Factors">
+        <option value = "Physical Rehabilitation">
+        <option value = "Dental Assistant">
+        <option value = "Radiation Therapy">
+        <option value = "Chicago">
+        <option value = "Prosthetics Case Management">
+        <option value = "General Care">
+        <option value = "Ophthalmic">
+        <option value = "Endodontics">
+        <option value = "Hand Surgery ">
+        <option value = "Enterostomal Therapy">
+        <option value = "Medical Research">
+        <option value = "Anatomic Pathology & Clinical Pathology">
+        <option value = "Assistive Technology Practitioner">
+        <option value = "Phlebology">
+        <option value = "Hemodialysis">
+        <option value = "Advanced Practice Dental Therapist">
+        <option value = "Homemaker">
+        <option value = "Independent Duty Medical Technicians">
+        <option value = "Recreation Therapist">
+        <option value = "Long-Term Care">
+        <option value = "Pulmonary Disease">
+        <option value = "Pediatric Gastroenterology">
+        <option value = "Dietetic Technician">
+        <option value = "Cytotechnology">
+        <option value = "Blood Banking">
+        <option value = "Diagnostic Radiology">
+        <option value = "Prosthetist">
+        <option value = "Religious Nonmedical Practitioner">
+        <option value = "Physical Therapist">
+        <option value = "Anaplastologist">
+        <option value = "Chiropractor">
+        <option value = "Personal Emergency Response Attendant">
+        <option value = "Pharmacist">
+        <option value = "Hospice">
+        <option value = "Radiological Physics">
+        <option value = "Optometrist">
+        <option value = "Surgical Critical Care">
+        <option value = "Dermatopathology">
+        <option value = "Pastoral">
+        <option value = "Mental Health">
+        <option value = "Community Health Worker">
+        <option value = "Ambulatory Care">
+        <option value = "Neuroscience">
+        <option value = "Case Management">
+        <option value = "Transplant Hepatology">
+        <option value = "Medical Laboratory">
+        <option value = "Surgery">
+        <option value = "Sleep Medicine">
+        <option value = "Addiction Medicine">
+        <option value = "Attendant Care Provider">
+        <option value = "School">
+        <option value = "Palliative/Hospice">
+        <option value = "Neurology">
+        <option value = "Developmental Therapist">
+        <option value = "Technician/Technologist">
+        <option value = "Graphics Designer">
+        <option value = "Neuromusculoskeletal Medicine & OMM">
+        <option value = "Poetry Therapist">
+        <option value = "Perfusionist">
+        <option value = "Addiction (Substance Use Disorder)">
+        <option value = "Pediatric Oncology">
+        <option value = "Pharmacist Clinician (PhC)/ Clinical Pharmacy Specialist">
+        <option value = "Geriatric">
+        <option value = "Dermatology">
+        <option value = "Independent Duty Corpsman">
+        <option value = "Occupational Health">
+        <option value = "Athletic Trainer">
+        <option value = "Cardiovascular Invasive Specialist">
+        <option value = "Registered Nurse">
+        <option value = "Radiation Oncology">
+        <option value = "Midwife">
+        <option value = "Neuromuscular Medicine">
+        <option value = "Ophthalmic Assistant">
+        <option value = "Public Medicine">
+        <option value = "Anesthesiology">
+        <option value = "Clinical Neuropsychologist">
+        <option value = "Psychoanalysis">
+        <option value = "Psychosomatic Medicine">
+        <option value = "Sonography">
+        <option value = "Otolaryngology/Facial Plastic Surgery">
+        <option value = "Medical Genetics">
+        <option value = "Microbiology">
+        <option value = "Ph.D. Medical Genetics">
+        <option value = "Forensic Pathology">
+        <option value = "General Practice">
+        <option value = "Obstetrics ">
+        <option value = "Nuclear Radiology">
+        <option value = "Neuroradiology">
+        <option value = "Registered Nurse First Assistant">
+        <option value = "Aerospace Medicine">
+        <option value = "Hospitalist">
+        <option value = "Kinesiotherapist">
+        <option value = "Medical">
+        <option value = "Hand">
+        <option value = "Magnetic Resonance Imaging (MRI)">
+        <option value = "Mental Retardation & Developmental Disabilities">
+        <option value = "Flight">
+        <option value = "Surgical Oncology">
+        <option value = "Spinal Cord Injury Medicine">
+        <option value = "Clinical">
+        <option value = "Orthopaedic Trauma">
+        <option value = "Research Study">
+        <option value = "Nurse Anesthetist">
+        <option value = "Reflexologist">
+        <option value = "Colon & Rectal Surgery">
+        <option value = "Obstetrics & Gynecology">
+        <option value = "Oral and Maxillofacial Surgery">
+        <option value = "Transplant Surgery">
+        <option value = "Nurse's Aide">
+        <option value = "Blood Banking & Transfusion Medicine">
+        <option value = "Legal Medicine">
+        <option value = "Foot and Ankle Surgery">
+        <option value = "Pediatric Surgery">
+        <option value = "Respiratory Therapist">
+        <option value = "Oral and Maxillofacial Pathology">
+        <option value = "Body Imaging">
+        <option value = "Nursing Home Administrator">
+        <option value = "Child Abuse Pediatrics">
+        <option value = "Acupuncturist">
+        <option value = "Allergy & Immunology">
+        <option value = "Gastroenterology">
+        <option value = "Music Therapist">
+        <option value = "Mechanotherapist">
+        <option value = "Physician Assistant">
+        <option value = "Pediatric Otolaryngology">
+        <option value = "Laboratory Management">
+        <option value = "MD">
+        <option value = "Sports Medicine">
+        <option value = "Surgical Assistant">
+        <option value = "Thoracic Surgery (Cardiothoracic Vascular Surgery)">
+        <option value = "Plastic and Reconstructive Surgery">
+        <option value = "Sleep Specialist">
+        <option value = "Marriage & Family Therapist">
+        <option value = "Mammography">
+        <option value = "Cognitive & Behavioral">
+        <option value = "Neonatal Intensive Care">
+        <option value = "Behavioral Analyst">
+        <option value = "Clinical Cardiac Electrophysiology">
+        <option value = "Electrophysiology">
+        <option value = "Dietary Manager">
+        <option value = "SNF/Subacute Care">
+        <option value = "Advanced Practice Midwife">
+        <option value = "Oncology">
+        <option value = "Pediatric Anesthesiology">
+        <option value = "Hematology">
+        <option value = "Group Psychotherapy">
+        <option value = "Neurorehabilitation">
+        <option value = "Plastic Surgery">
+        <option value = "Primary Podiatric Medicine">
+        <option value = "Prosthodontics">
+        <option value = "Religious Nonmedical Nursing Personnel">
+        <option value = "Adult Companion">
+        <option value = "Therapeutic Radiology">
+        <option value = "Neonatal/Pediatrics">
+        <option value = "Health Educator">
+    </datalist>
+    <div id="floating-panel" align="left">
+        <img src="https://cdn.d1baseball.com/logos/teams/256/ucriver.png" width=90% height=90%>
+        <br>
+
+        <b><font size="3">Hospitals and Providers Heatmap</font></b><br>
+
+        <input id="address" type="textbox" placeholder="Enter ZipCode">
+        <input id="submit" type="button" value="Search"><br>
+        <input id="specialty" type="textbox" placeholder="Specialty" list="specialtyList"><br>
+        <font size=2><b><font color="red">*</font>Specialty Must Be Selected From List</font></b>
+        <hr>
+        
+        <input type="radio" id="querySelection1" name="group1" value="Milk" checked>
+        <font size="2"> Population to Doctor Ratio Per Zip Code</font><br>
+        <input type="radio" id="querySelection2" name="group1" value="Butter">
+        <font size="2"> Taxonomy Specialty Per Zip Code</font><br>
+    </div>
+    <div id="map"></div>
+
+    <script type="text/javascript" language="javascript" src="popDoctorRatio.json"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" 
+        src="https://maps.googleapis.com/maps/api/js?v=3&amp;key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>-->
+
+    <script>
+    // var client = new cassandra.Client({contactPoint : ['127.0.0.1']});
+    // client.connect(function(err, result){
+    //     console.log('cassandra connected')
+    // });
+
+    var markers = [];
+    var heatmap = new google.maps.visualization.HeatmapLayer();
+    var heatmapData = [];
+    
+    function initMap() {
+        $("#specialty").hide();
+        $("#querySelection2").click(function() {
+            $("#specialty").show()
+        });
+        $("#querySelection1").click(function() {
+            $("#specialty").hide()
+        });
+        $('#address').keypress(function(e){
+            if(e.keyCode == 13){
+                $('#submit').click();
+            }
+        });
+        $('#specialty').keypress(function(e){
+            if(e.keyCode == 13){
+                $('#submit').click();
+            }
+        });
+
+        //Declare your variables
+        let markers = [],
+            initialLocation = {
+                lat: 33.9997,
+                lng: -117.3675
+            },
+        geocoder = new google.maps.Geocoder(),            
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 13,
+            center: initialLocation,
+        });
+
+        document.getElementById('submit').addEventListener('click', function() {
+            if(document.getElementById('querySelection1').checked){
+                geocodeAddress1(geocoder, map);
+            }
+            if(document.getElementById('querySelection2').checked){
+                geocodeAddress2(geocoder, map);
+            }
+        });
+    }
+
+    var infowindow = new google.maps.InfoWindow();
+
+    function geocodeAddress1(geocoder, resultsMap) {
+        heatmap.setMap(heatmap.getMap() ? null : resultsMap);
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        for (var i = 0; i < heatmap.length; i++) {
+            heatmap[i].setMap(null);
+        }
+        var address = document.getElementById('address').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+            if (status === 'OK' && address != "") {
+                resultsMap.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                                map: resultsMap,
+                                zoom: 3,
+                                position: results[0].geometry.location
+                            });
+                $(document).ready(function() {
+                    $.getJSON('popDoctorRatio.json', function(json1) {
+                        var found = 0;
+                        // console.log('searching JSON for matching zipcode');
+                        json1.map((item) => {
+                            item = JSON.parse(item)
+                            var found = 0;
+                            if(item.ZipCode == address){
+                                found = 1;
+                                // console.log('found matching zipcode');
+                                var details = '<div id="content">'+
+                                                '<div id="siteNotice">'+
+                                                '</div>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
+                                                '<div id="bodyContent">'+
+                                                '<p><b>Population: </b>' + item.Pop + '<br>'+
+                                                '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
+                                                '<b>Ratio: </b>' + item.Ratio + '</p>' +
+                                                '</div>'+
+                                                '</div>';
+                                bindInfoWindow(marker, resultsMap, infowindow, details);
+                                markers.push(marker);
+                                exit;
+                            }
+                        });
+                        // console.log('finished searching');
+                        if(found == 0){
+                            alert('No Hospital(s) In Provided Dataset');
+                            var details = '<div id="content">'+
+                                            '<div id="siteNotice">'+
+                                            '</div>'+
+                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                            '<div id="bodyContent">';
+                            bindInfoWindow(marker, resultsMap, infowindow, details);
+                            markers.push(marker);
+                        }
+                    });
+
+                    heatmapData = [];
+                    $.getJSON('popDoctorRatioHospital.json', function(json1) {
+                        json1.map((item) => {
+                            item = JSON.parse(item)
+                            if(address == item.ZipCode){
+                                var marker = new google.maps.Marker({
+                                    map: resultsMap,
+                                    zoom: 3,
+                                    position: {lat: parseFloat(item.Y), lng: parseFloat(item.X)}
+                                });
+                                markers.push(marker);
+                                var details = '<div id="content">'+
+                                                '<div id="siteNotice">'+
+                                                '</div>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Hospital Name: ' + item.HospitalName + '</h3>' +
+                                                '<h3 id="firstHeading" class="firstHeading">Provider Number: ' + item.ProviderNumber + '</h3>' +
+                                                '<div id="bodyContent">'+
+                                                '<p><b>Estimated Population: </b>' + (item.Pop/item.NumberOfHospitals) + '<br>' +
+                                                '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
+                                                '<b>Ratio: </b>' + item.Ratio + '<br>';
+                                
+                                bindInfoWindow(marker, resultsMap, infowindow, details);
+
+                                heatmapData.push( {location: new google.maps.LatLng(item.Y, item.X), weight: item.Ratio} );
+                            }
+                        });
+                        // console.log('finished searching providers');
+                        heatmap = new google.maps.visualization.HeatmapLayer({
+                            data: heatmapData,
+                            // maxIntensity: '50px',
+                            dissipating: true,
+                            radius: 100,
+                            opacity: 0.7
+                        });
+                        heatmap.setMap(resultsMap);
+                    });
+                });
+
+            } else if(address == ""){
+                alert('Please Enter Zip Code In Search Menu');
+            }
+            else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+
+        });
+    }
+    function geocodeAddress2(geocoder, resultsMap) {
+        var found = 0;
+        heatmap.setMap(heatmap.getMap() ? null : resultsMap);
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        var address = document.getElementById('address').value;
+        var specialty = document.getElementById('specialty').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+            if (status === 'OK' && (specialty != "" || address != "")) {
+                resultsMap.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                                map: resultsMap,
+                                zoom: 3,
+                                position: results[0].geometry.location
+                            });
+                markers.push(marker);
+                $(document).ready(function() {
+
+                    heatmapData = [];
+                    $.getJSON('taxonomyCountHospital.json', function(json1) {
+                        json1.map((item) => {
+                            item = JSON.parse(item)
+                            if(address == item.ZipCode && specialty == item.TaxonomyCode1){
+                                found = 1;
+                                var marker = new google.maps.Marker({
+                                    map: resultsMap,
+                                    zoom: 3,
+                                    position: {lat: parseFloat(item.Y), lng: parseFloat(item.X)}
+                                });
+                                var details = '<div id="content">'+
+                                                '<div id="siteNotice">'+
+                                                '</div>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Hospital Name: ' + item.HospitalName + '</h3>'+
+                                                '<div id="bodyContent">'+
+                                                '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'+
+                                                '<b>Number of Doctors: </b>' + item.Count
+                                bindInfoWindow(marker, resultsMap, infowindow, details);
+                                markers.push(marker);
+                                heatmapData.push( {location: new google.maps.LatLng(item.Y, item.X), weight: item.Count} );
+                            }
+                        });
+
+                        if(found != 0){
+                            $.getJSON('taxonomyCount.json', function(json1) {
+                                // console.log('searching JSON for matching zipcode');
+                                json1.map((item) => {
+                                    item = JSON.parse(item)
+                                    var tempZip = item.ZipCode;
+                                    if( address == tempZip.substring(0,5) && specialty == item.TaxonomyCode1 ){
+                                        found = 1;
+                                        // console.log('found matching zipcode');
+                                        var details = '<div id="content">'+
+                                                        '<div id="siteNotice">'+
+                                                        '</div>'+
+                                                        '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                                        '<div id="bodyContent">'+
+                                                        '<p><b>Specialty: </b>' + item.TaxonomyCode1 + '<br>'+
+                                                        '<b>Number of Doctors: </b>' + item.Count;
+                                        bindInfoWindow(marker, map, infowindow, details);
+                                        markers.push(marker);
+                                        // exit;
+                                    }
+                                });
+                                // console.log('finished searching');
+                                // if(found == 0){
+                                //     markers.push(marker);
+                                //     alert('No Specialist(s) In Provided Zip Code');
+                                //     exit;
+                                // }
+                            });
+                        } else {
+                            $.getJSON('taxonomyCount.json', function(json1) {
+                                // console.log('searching JSON for matching zipcode');
+                                var details = '<div id="content">'+
+                                                '<div id="siteNotice">'+
+                                                '</div>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                                '<div id="bodyContent">' +
+                                                '<p><b>Specialty: </b>' + specialty;
+                                                // '<b>Number of Doctors: </b>' + item.Count;
+                                bindInfoWindow(marker, map, infowindow, details);
+                                markers.push(marker);
+                                // json1.map((item) => {
+                                //     item = JSON.parse(item)
+                                //     var tempZip = item.ZipCode;
+                                //     if( address == tempZip.substring(0,5) && specialty == item.TaxonomyCode1 ){
+                                //         found = 1;
+                                //         console.log('found matching zipcode');
+                                //         var details = '<div id="content">'+
+                                //                         '<div id="siteNotice">'+
+                                //                         '</div>'+
+                                //                         '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                //                         '<div id="bodyContent">' +
+                                //                         '<p><b>Specialty: </b>' + item.TaxonomyCode1;
+                                //                         // '<b>Number of Doctors: </b>' + item.Count;
+                                //         bindInfoWindow(marker, map, infowindow, details);
+                                //         markers.push(marker);
+                                //         // exit;
+                                //     }
+                                // });
+                                // console.log('finished searching');
+                                // if(found == 0){
+                                //     markers.push(marker);
+                                //     alert('No Specialist(s) In Provided Zip Code');
+                                //     exit;
+                                // }
+                            });
+                            alert('No Specialist(s) In Provided Zip Code');
+                        }
+                        // // alert('1found val: '+found);
+                        // if(found == 0){
+                        //     alert('No Specialist In Provided Zip Code');
+                        //     exit;
+                        // }
+                        // alert('2found val: '+found);
+                        // console.log('finished searching providers');
+                        heatmap = new google.maps.visualization.HeatmapLayer({
+                            data: heatmapData,
+                            // maxIntensity: '50px',
+                            dissipating: true,
+                            radius: 100,
+                            opacity: 0.7
+                        });
+                        // alert('3found val: '+found);
+                        heatmap.setMap(resultsMap);
+                    });
+                });
+            } else if(specialty == "" | address == "") {
+                alert('Please Have Zip Code AND Specialty Selected From Search Menu');
+            }
+            else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+
+        });
+    }
+
+
+
+    function bindInfoWindow(marker, map, infowindow, strDescription) {
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.setContent(strDescription);
+            infowindow.open(map, marker);
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+    <!--<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&callback=initMap">
+    </script>-->
+  </body>
+</html>
