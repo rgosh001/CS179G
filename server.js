@@ -7,7 +7,7 @@ const httpProxy = require('http-proxy');
 const cassandra = require('cassandra-driver');
 const async = require('async');
 const assert = require('assert');
-var Promise = require('promise');
+const Promise = require('promise');
 
 
 // connect to the cluster
@@ -32,15 +32,25 @@ var server = http.createServer(function (req, res) {
         'Access-Control-Allow-Origin': 'http://localhost:8888',
     });
 
+    console.log('in createServer');
 
     // req.url = /1a&zipcode
     // zipcode = 1a&zipcode
-    var params = req.url.substr(1, req.url.length - 1);
+
+    console.log('req.url: ' + req.url);
+
+    var str = req.url;
+    var params = str.substr(1, str.length - 1);
     var cases = params.substr(0, 2);
     var zipcode = params.substr(3, params.length - 1);
     var amp = zipcode.indexOf('&');
     var zipcode2 = params.substr(3, amp);
     var specialty = zipcode.substr(amp + 1, req.url.length - 1);
+
+    console.log('case: ' + cases);
+    console.log('params: ' + params);
+
+
     switch(cases) {
         case '1a':
             console.log('case: ' + cases);
@@ -101,20 +111,6 @@ var server = http.createServer(function (req, res) {
         default:
             break;
     }
-    var row;
-    const query = 'SELECT zipcode, pop, numberofdoctors, ratio FROM pop_doctor_ratio WHERE zipcode = ?';
-    client.execute(query, [zipcode], {prepare: true}).then(function(result) {
-        console.log('after execute and before for');
-        for(var i = 0; i < result.rows.length; i++){
-            row = result.rows[i];
-            console.log('row: ', row);
-        }
-        console.log('finished printing');
-        res.write(JSON.stringify(row));
-        res.end();
-        //console.log('Shutting down');
-        //client.shutdown();
-    })
 }).listen(8000);
 
 console.log("listening on port 8000")
