@@ -495,7 +495,7 @@
         <input id="specialty" type="textbox" placeholder="Specialty" list="specialtyList"><br>
         <font size=2><b><font color="red">*</font>Specialty Must Be Selected From List</font></b>
         <hr>
-        
+
         <input type="radio" id="querySelection1" name="group1" value="Milk" checked>
         <font size="2"> Population to Doctor Ratio Per Zip Code</font><br>
         <input type="radio" id="querySelection2" name="group1" value="Butter">
@@ -503,22 +503,25 @@
     </div>
     <div id="map"></div>
 
-    <script type="text/javascript" language="javascript" src="popDoctorRatio.json"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" 
+    <!-- begin js cassandra datastax -->
+    <!--<script type="text/javascript" src="index.js"></script>
+    <script type="text/javascript">
+       nodeConnector.init(['popDoctorRatio.json', 'popDoctorRatioHospital.json', 'taxonomyCount.json', 'taxonomyCountHospital.json']);
+       nodeConnector.printArgs();
+    </script> -->
+    <!-- end js cassandra datastax -->
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript"
         src="https://maps.googleapis.com/maps/api/js?v=3&amp;key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>
     <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>-->
 
     <script>
-    // var client = new cassandra.Client({contactPoint : ['127.0.0.1']});
-    // client.connect(function(err, result){
-    //     console.log('cassandra connected')
-    // });
 
     var markers = [];
     var heatmap = new google.maps.visualization.HeatmapLayer();
     var heatmapData = [];
-    
+
     function initMap() {
         $("#specialty").hide();
         $("#querySelection2").click(function() {
@@ -544,7 +547,7 @@
                 lat: 33.9997,
                 lng: -117.3675
             },
-        geocoder = new google.maps.Geocoder(),            
+        geocoder = new google.maps.Geocoder(),
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 13,
             center: initialLocation,
@@ -562,6 +565,7 @@
 
     var infowindow = new google.maps.InfoWindow();
 
+    // popDoctorRatio
     function geocodeAddress1(geocoder, resultsMap) {
         heatmap.setMap(heatmap.getMap() ? null : resultsMap);
         for (var i = 0; i < markers.length; i++) {
@@ -571,6 +575,43 @@
             heatmap[i].setMap(null);
         }
         var address = document.getElementById('address').value;
+
+        // talk to node
+        console.log('localhost:8000/' + address);
+        console.log(httpGet('http://localhost:8000' + address));
+        /*$(document).ready(function(json1) {
+                //var found = 0;
+                // console.log('searching JSON for matching zipcode');
+                json1.map((item) => {
+                    item = JSON.parse(item)
+
+                    // console.log('found matching zipcode');
+                    var details = '<div id="content">'+
+                                    '<div id="siteNotice">'+
+                                    '</div>'+
+                                    '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
+                                    '<div id="bodyContent">'+
+                                    '<p><b>Population: </b>' + item.Pop + '<br>'+
+                                    '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
+                                    '<b>Ratio: </b>' + item.Ratio + '</p>' +
+                                    '</div>'+
+                                    '</div>';
+                    bindInfoWindow(marker, resultsMap, infowindow, details);
+                    markers.push(marker);
+                    exit;
+                });
+                // console.log('finished searching');
+                if(found == 0){
+                    alert('No Hospital(s) In Provided Dataset');
+                    var details = '<div id="content">'+
+                                    '<div id="siteNotice">'+
+                                    '</div>'+
+                                    '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                    '<div id="bodyContent">';
+                    bindInfoWindow(marker, resultsMap, infowindow, details);
+                    markers.push(marker);
+                }
+            });*/
         geocoder.geocode({'address': address}, function(results, status) {
             if (status === 'OK' && address != "") {
                 resultsMap.setCenter(results[0].geometry.location);
@@ -579,44 +620,8 @@
                                 zoom: 3,
                                 position: results[0].geometry.location
                             });
-                $(document).ready(function() {
-                    $.getJSON('popDoctorRatio.json', function(json1) {
-                        var found = 0;
-                        // console.log('searching JSON for matching zipcode');
-                        json1.map((item) => {
-                            item = JSON.parse(item)
-                            var found = 0;
-                            if(item.ZipCode == address){
-                                found = 1;
-                                // console.log('found matching zipcode');
-                                var details = '<div id="content">'+
-                                                '<div id="siteNotice">'+
-                                                '</div>'+
-                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
-                                                '<div id="bodyContent">'+
-                                                '<p><b>Population: </b>' + item.Pop + '<br>'+
-                                                '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
-                                                '<b>Ratio: </b>' + item.Ratio + '</p>' +
-                                                '</div>'+
-                                                '</div>';
-                                bindInfoWindow(marker, resultsMap, infowindow, details);
-                                markers.push(marker);
-                                exit;
-                            }
-                        });
-                        // console.log('finished searching');
-                        if(found == 0){
-                            alert('No Hospital(s) In Provided Dataset');
-                            var details = '<div id="content">'+
-                                            '<div id="siteNotice">'+
-                                            '</div>'+
-                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
-                                            '<div id="bodyContent">';
-                            bindInfoWindow(marker, resultsMap, infowindow, details);
-                            markers.push(marker);
-                        }
-                    });
 
+                $(document).ready(function() {                
                     heatmapData = [];
                     $.getJSON('popDoctorRatioHospital.json', function(json1) {
                         json1.map((item) => {
@@ -637,7 +642,7 @@
                                                 '<p><b>Estimated Population: </b>' + (item.Pop/item.NumberOfHospitals) + '<br>' +
                                                 '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
                                                 '<b>Ratio: </b>' + item.Ratio + '<br>';
-                                
+
                                 bindInfoWindow(marker, resultsMap, infowindow, details);
 
                                 heatmapData.push( {location: new google.maps.LatLng(item.Y, item.X), weight: item.Ratio} );
@@ -664,6 +669,8 @@
 
         });
     }
+
+    // taxonomyCount
     function geocodeAddress2(geocoder, resultsMap) {
         var found = 0;
         heatmap.setMap(heatmap.getMap() ? null : resultsMap);
@@ -802,7 +809,20 @@
         });
     }
 
-
+    // http://stackoverflow.com/a/4033310
+    function httpGet(url)
+    {
+        var req = new XMLHttpRequest();
+        //console.log(xmlHttp.responseText);
+        req.onreadystatechange = function() {
+            if (req.readyState == 4 && req.status == 200) {
+                //console.log('in onreadystatechange and before return req.responseText' + req.responseText);
+                return req.responseText;
+            }
+        }
+        req.open('GET', url, false);
+        req.send();
+    }
 
     function bindInfoWindow(marker, map, infowindow, strDescription) {
         google.maps.event.addListener(marker, 'click', function () {
