@@ -593,6 +593,7 @@
                         var json = req.responseText;
                         if(json != ""){
                             console.log('starting zipcode marker with info: ' + req.ResponseText);
+                            var item = JSON.parse("[" + json + "]");
                             console.log(item);
 
                             for(var i = 0; i < item.length; i++){                            
