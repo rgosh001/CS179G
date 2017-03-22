@@ -593,43 +593,48 @@
 
 
                         var jsonReq = req.responseText;
+                        JSON.stringify(jsonReq);
                         console.log('starting zipcode marker with info: ' + req.responseText);
+                        console.log(jsonReq[0].zipcode);
 
-                        var found = 0;
-                        jsonReq.map((item) => {
-                            console.log('INSIDE parseJSON hashmap');
-                            item = JSON.parse(item)
-                            var found = 0;
-                            if(item.ZipCode == address){
-                                found = 1;
-                                console.log('FOUND MATCHING ZIPCODE TRIOTWIOJ');
-                                var details = '<div id="content">'+
-                                                '<div id="siteNotice">'+
-                                                '</div>'+
-                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
-                                                '<div id="bodyContent">'+
-                                                '<p><b>Population: </b>' + item.Pop + '<br>'+
-                                                '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
-                                                '<b>Ratio: </b>' + item.Ratio + '</p>' +
-                                                '</div>'+
-                                                '</div>';
-                                bindInfoWindow(marker, resultsMap, infowindow, details);
-                                markers.push(marker);
-                                exit;
-                            }
-                        });
-                        // console.log('finished searching');
-                        if(found == 0){
-                            alert('No Hospital(s) In Provided Dataset');
-                            var details = '<div id="content">'+
-                                            '<div id="siteNotice">'+
-                                            '</div>'+
-                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
-                                            '<div id="bodyContent">';
-                            bindInfoWindow(marker, resultsMap, infowindow, details);
-                            markers.push(marker);
-                        }
 
+                        // $.parseJSON(jsonReq, function(json1) {
+                        //     var found = 0;
+                        //     console.log('INSIDE parseJSON hashmap');
+                        //     json1.map((item) => {
+                        //         item = JSON.parse(item)
+                        //         var found = 0;
+                        //         if(item.ZipCode == address){
+                        //             found = 1;
+                        //             console.log('FOUND MATCHING ZIPCODE TRIOTWIOJ');
+                        //             var details = '<div id="content">'+
+                        //                             '<div id="siteNotice">'+
+                        //                             '</div>'+
+                        //                             '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
+                        //                             '<div id="bodyContent">'+
+                        //                             '<p><b>Population: </b>' + item.Pop + '<br>'+
+                        //                             '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
+                        //                             '<b>Ratio: </b>' + item.Ratio + '</p>' +
+                        //                             '</div>'+
+                        //                             '</div>';
+                        //             bindInfoWindow(marker, resultsMap, infowindow, details);
+                        //             markers.push(marker);
+                        //             exit;
+                        //         }
+                        //     });
+                        //     // console.log('finished searching');
+                        //     if(found == 0){
+                        //         alert('No Hospital(s) In Provided Dataset');
+                        //         var details = '<div id="content">'+
+                        //                         '<div id="siteNotice">'+
+                        //                         '</div>'+
+                        //                         '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                        //                         '<div id="bodyContent">';
+                        //         bindInfoWindow(marker, resultsMap, infowindow, details);
+                        //         markers.push(marker);
+                        //     }
+                        // });
+                        
 
 
                     }
