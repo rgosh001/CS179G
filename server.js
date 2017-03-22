@@ -102,6 +102,20 @@ var server = http.createServer(function (req, res) {
         default:
             break;
     }
+    var row;
+    const query = 'SELECT zipcode, pop, numberofdoctors, ratio FROM pop_doctor_ratio WHERE zipcode = ?';
+    client.execute(query, [zipcode], {prepare: true}).then(function(result) {
+        console.log('after execute and before for');
+        for(var i = 0; i < result.rows.length; i++){
+            row = result.rows[i];
+            console.log('row: ', row);
+        }
+        console.log('finished printing');
+        res.write(JSON.stringify(row));
+        res.end();
+        //console.log('Shutting down');
+        //client.shutdown();
+    })
 }).listen(8000);
 
 console.log("listening on port 8000")
