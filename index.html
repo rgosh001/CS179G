@@ -558,7 +558,8 @@
                 geocodeAddress1b(geocoder, map);
             }
             if(document.getElementById('querySelection2').checked){
-                geocodeAddress2(geocoder, map);
+                geocodeAddress2a(geocoder, map);
+                geocodeAddress2b(geocoder, map);
             }
         });
     }
@@ -725,6 +726,7 @@
         });
     }
     // taxonomyCount
+    // error checking very minimal
     function geocodeAddress2a(geocoder, resultsMap) {
         heatmap.setMap(heatmap.getMap() ? null : resultsMap);
         for (var i = 0; i < markers.length; i++) {
@@ -742,7 +744,7 @@
                                 position: results[0].geometry.location
                             });
                 // talk to node
-                console.log('http://localhost:8000/' + '2a&' + address + '&') + specialty;
+                console.log('http://localhost:8000/' + '2a&' + address + '&' + specialty);
                 var url = 'http://localhost:8000/' + '2a&' + address + '&' + specialty;
                 console.log('searching at', url);
                 var req = new XMLHttpRequest();
@@ -761,7 +763,8 @@
                                                 '</div>'+
                                                 '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
                                                 '<div id="bodyContent">' +
-                                                '<p><b>Specialty: </b>' + specialty +
+                                                '<p><b>Specialty: </b>' + specialty + '<br>' +
+                                                '<b>Number of Doctors: </b>' + item[0].count;
                                                 '</div>';
                                 bindInfoWindow(marker, resultsMap, infowindow, details);
                                 markers.push(marker);
@@ -769,7 +772,7 @@
                             }
                         }
                         if(json == ""){
-                            alert('No Hospital(s) In Provided Dataset');
+                            alert('No Specialist(s) In Provided ZipCode');
                             var details = '<div id="content">'+
                                             '<div id="siteNotice">'+
                                             '</div>'+
@@ -778,6 +781,88 @@
                             bindInfoWindow(marker, resultsMap, infowindow, details);
                             markers.push(marker);
                         }
+                    }
+                }
+                req.open('GET', url, false);
+                req.send();
+                console.log('finished search zipcode marker');
+
+            } else if(address == ""){
+                alert('Please Enter Zip Code In Search Menu');
+            }
+            else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+
+        });
+    }
+    function geocodeAddress2b(geocoder, resultsMap) {
+        //heatmap.setMap(heatmap.getMap() ? null : resultsMap);
+        /*for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        for (var i = 0; i < heatmap.length; i++) {
+            heatmap[i].setMap(null);
+        }*/
+        var address = document.getElementById('address').value;
+        var specialty = document.getElementById('specialty').value;
+
+        geocoder.geocode({'address': address}, function(results, status) {
+            if (status === 'OK' && address != "") {
+                //resultsMap.setCenter(results[0].geometry.location);
+                // talk to node
+                console.log('http://localhost:8000/' + '2b&' + address + '&' + specialty);
+                var url = 'http://localhost:8000/' + '2b&' + address + '&' + specialty;
+                console.log('searching at', url);
+                var req = new XMLHttpRequest();
+                req.onreadystatechange = function() {
+                    if (req.readyState == 4 && req.status == 200) {
+                        var json = req.responseText;
+                        if(json != ""){
+                            //console.log('starting zipcode marker with info: ' + req.ResponseText);
+                            var item = JSON.parse(json);
+                            console.log(item[0]);
+                            console.log(item[1]);
+
+                            for(var i = 0; i < item.length; i++){
+                                console.log('FOUND MATCHING ZIPCODE and i = ', i);
+                                var marker = new google.maps.Marker({
+                                    map: resultsMap,
+                                    zoom: 3,
+                                    position: {lat: parseFloat(item[i].y), lng: parseFloat(item[i].x)}
+                                });
+                                var details =   '<div id="content">'+
+                                                '<div id="siteNotice">'+
+                                                '</div>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Hospital Name: ' + item[i].hospitalname + '</h3>'+
+                                                '<div id="bodyContent">'+
+                                                '<p><b>Specialty: </b>' + item[i].taxonomycode1 + '<br>'+
+                                                '<b>Number of Doctors: </b>' + item[i].count;
+
+                                bindInfoWindow(marker, resultsMap, infowindow, details);
+                                heatmapData.push( {location: new google.maps.LatLng(item[i].y, item[i].x), weight: item[i].count} );
+                                //markers.push(marker);
+                                //exit;
+                            }
+                        }
+                        if(json == ""){
+                            alert('No Specialist(s) In Provided ZipCode');
+                            var details = '<div id="content">'+
+                                            '<div id="siteNotice">'+
+                                            '</div>'+
+                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                            '<div id="bodyContent">';
+                            bindInfoWindow(marker, resultsMap, infowindow, details);
+                            markers.push(marker);
+                        }
+                        heatmap = new google.maps.visualization.HeatmapLayer({
+                            data: heatmapData,
+                            // maxIntensity: '50px',
+                            dissipating: true,
+                            radius: 100,
+                            opacity: 0.7
+                        });
+                        heatmap.setMap(resultsMap);
                     }
                 }
                 req.open('GET', url, false);

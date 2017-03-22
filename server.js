@@ -35,7 +35,8 @@ var server = http.createServer(function (req, res) {
 
     // req.url = /1a&zipcode
     // zipcode = 1a&zipcode
-    var params = req.url.substr(1, req.url.length - 1);
+    var str = JSON.stringify(req.url);
+    var params = str.substr(1, str.length - 1);
     var cases = params.substr(0, 2);
     var zipcode = params.substr(3, params.length - 1);
     var amp = zipcode.indexOf('&');
@@ -81,6 +82,20 @@ var server = http.createServer(function (req, res) {
                 console.log('after execute and before for');
                 console.log('finished printing');
                 res.write(JSON.stringify(result.rows[0]));
+                res.end();
+            });
+            break;
+        case '2b':
+            console.log('case: ' + cases);
+            console.log(zipcode2);
+            console.log(specialty);
+            console.log('before client.execute');
+            var row;
+            const query4 = 'SELECT zipcode, taxonomycode1, x, y, hospitalname, count FROM taxonomy_count_hospital WHERE zipcode = ? and taxonomycode1 = ?';
+            client2.execute(query4, [zipcode2, specialty], {prepare: true}).then(function(result) {
+                console.log('after execute and before for');
+                console.log('finished printing');
+                res.write(JSON.stringify(result.rows));
                 res.end();
             });
             break;
