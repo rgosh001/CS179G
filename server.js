@@ -35,8 +35,12 @@ var server = http.createServer(function (req, res) {
 
     // req.url = /1a&zipcode
     // zipcode = 1a&zipcode
+<<<<<<< HEAD
     var str = JSON.stringify(req.url);
     var params = str.substr(1, str.length - 1);
+=======
+    var params = req.url.substr(1, req.url.length - 1);
+>>>>>>> b68904c... switch case for queries
     var cases = params.substr(0, 2);
     var zipcode = params.substr(3, params.length - 1);
     var amp = zipcode.indexOf('&');
@@ -85,6 +89,7 @@ var server = http.createServer(function (req, res) {
                 res.end();
             });
             break;
+<<<<<<< HEAD
         case '2b':
             console.log('case: ' + cases);
             console.log(zipcode2);
@@ -116,6 +121,11 @@ var server = http.createServer(function (req, res) {
         //console.log('Shutting down');
         //client.shutdown();
     })
+=======
+        default:
+            break;
+    }
+>>>>>>> b68904c... switch case for queries
 }).listen(8000);
 
 console.log("listening on port 8000")

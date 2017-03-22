@@ -846,23 +846,6 @@
                                 heatmapData.push( {location: new google.maps.LatLng(item[i].y, item[i].x), weight: item[i].count} );
                                 //markers.push(marker);
                                 //exit;
-=======
-                            for(var i = 0; i < item.length; i++){
-                                console.log('FOUND MATCHING ZIPCODE and i = ', i);
-                                var details = '<div id="content">'+
-                                                '<div id="siteNotice">'+
-                                                '</div>'+
-                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item[i].zipcode + '</h3>'+
-                                                '<div id="bodyContent">'+
-                                                '<p><b>Population: </b>' + item[i].pop + '<br>'+
-                                                '<b>Number of Doctors: </b>' + item[i].numberofdoctors + '<br>' +
-                                                '<b>Ratio: </b>' + item[i].ratio + '</p>' +
-                                                '</div>'+
-                                                '</div>';
-                                bindInfoWindow(marker, resultsMap, infowindow, details);
-                                markers.push(marker);
-                                exit;
->>>>>>> 1d9a186... making dynamic
                             }
                         }
                         if(json == ""){
