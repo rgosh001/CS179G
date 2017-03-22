@@ -517,7 +517,6 @@
     <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiMAjzq3DD4rpdH65aabg82JXUtHJUWzQ&libraries=visualization"></script>-->
 
     <script>
-    var jsonReq;
     var markers = [];
     var heatmap = new google.maps.visualization.HeatmapLayer();
     var heatmapData = [];
@@ -576,11 +575,6 @@
         }
         var address = document.getElementById('address').value;
 
-        // talk to node
-        console.log('localhost:8000/' + address);
-        console.log(httpGet('http://localhost:8000/' + address));
-        //console.log(json);
-
         geocoder.geocode({'address': address}, function(results, status) {
             if (status === 'OK' && address != "") {
                 resultsMap.setCenter(results[0].geometry.location);
@@ -590,43 +584,57 @@
                                 position: results[0].geometry.location
                             });
                 $(document).ready(function() {
-                    $.getJSON('popDoctorRatio.json', function(json1) {
-                        var found = 0;
-                        // console.log('searching JSON for matching zipcode');
-                        json1.map((item) => {
-                            item = JSON.parse(item)
-                            var found = 0;
-                            if(item.ZipCode == address){
-                                found = 1;
-                                // console.log('found matching zipcode');
-                                var details = '<div id="content">'+
-                                                '<div id="siteNotice">'+
-                                                '</div>'+
-                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
-                                                '<div id="bodyContent">'+
-                                                '<p><b>Population: </b>' + item.Pop + '<br>'+
-                                                '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
-                                                '<b>Ratio: </b>' + item.Ratio + '</p>' +
-                                                '</div>'+
-                                                '</div>';
-                                bindInfoWindow(marker, resultsMap, infowindow, details);
-                                markers.push(marker);
-                                exit;
-                            }
-                        });
-                        // console.log('finished searching');
-                        if(found == 0){
-                            alert('No Hospital(s) In Provided Dataset');
-                            var details = '<div id="content">'+
-                                            '<div id="siteNotice">'+
-                                            '</div>'+
-                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
-                                            '<div id="bodyContent">';
-                            bindInfoWindow(marker, resultsMap, infowindow, details);
-                            markers.push(marker);
+                    // talk to node
+                    console.log('localhost:8000/' + address);
+                    var url = 'localhost:8000/' + address;
+                    console.log('searching at', url);
+                    var req = new XMLHttpRequest();
+                    req.onreadystatechange = function() {
+                        if (req.readyState == 4 && req.status == 200) {
+                            var jsonReq = req.responseText;
+                            console.log('starting zipcode marker with info: ' + req.responseText);
+                            $.parseJSON(jsonReq, function(json1) {
+                                var found = 0;
+                                // console.log('searching JSON for matching zipcode');
+                                json1.map((item) => {
+                                    item = JSON.parse(item)
+                                    var found = 0;
+                                    if(item.ZipCode == address){
+                                        found = 1;
+                                        // console.log('found matching zipcode');
+                                        var details = '<div id="content">'+
+                                                        '<div id="siteNotice">'+
+                                                        '</div>'+
+                                                        '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.ZipCode + '</h3>'+
+                                                        '<div id="bodyContent">'+
+                                                        '<p><b>Population: </b>' + item.Pop + '<br>'+
+                                                        '<b>Number of Doctors: </b>' + item.NumberOfDoctors + '<br>' +
+                                                        '<b>Ratio: </b>' + item.Ratio + '</p>' +
+                                                        '</div>'+
+                                                        '</div>';
+                                        bindInfoWindow(marker, resultsMap, infowindow, details);
+                                        markers.push(marker);
+                                        exit;
+                                    }
+                                });
+                                // console.log('finished searching');
+                                if(found == 0){
+                                    alert('No Hospital(s) In Provided Dataset');
+                                    var details = '<div id="content">'+
+                                                    '<div id="siteNotice">'+
+                                                    '</div>'+
+                                                    '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
+                                                    '<div id="bodyContent">';
+                                    bindInfoWindow(marker, resultsMap, infowindow, details);
+                                    markers.push(marker);
+                                }
+                            });                            
                         }
-                    });
-
+                    }
+                    req.open('GET', url, false);
+                    req.send();
+                    console.log('finished search zipcode marker');
+                    /*
                     heatmapData = [];
                     $.getJSON('popDoctorRatioHospital.json', function(json1) {
                         json1.map((item) => {
@@ -662,7 +670,7 @@
                             opacity: 0.7
                         });
                         heatmap.setMap(resultsMap);
-                    });
+                    });*/
                 });
 
             } else if(address == ""){
