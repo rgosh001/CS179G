@@ -17,22 +17,7 @@ const client = new cassandra.Client({
     keyspace: 'hospitals'
 });
 
-// http://stackoverflow.com/a/2190927
-var nodeConnector = nodeConnector || (function(){
-    var _args = {}; // private
-
-    return {
-        init : function(Args) {
-            _args = Args;
-            // some other initialising
-        },
-        printArgs : function() {
-            for(var i = 0; i < _args.length; i++){
-                console.log('_args[' + i + ']: ' + _args[i]);
-            }
-        }
-    };
-}());
+client.connect();
 
 var server = http.createServer(function (req, res) {
     res.writeHead(200, {
@@ -42,33 +27,22 @@ var server = http.createServer(function (req, res) {
 
     var zipcode = req.url.substr(1, req.url.length - 1);
 
-    client.connect()
-        .then(function () {
-            console.log('zipcode: ' + zipcode);
-        })
+    console.log('before client.execute');
 
     var row;
-    if(1){
-        client.execute(query, [zipcode], {prepare: true});
+    const query = 'SELECT zipcode, pop, numberofdoctors, ratio FROM pop_doctor_ratio WHERE zipcode = ?';
+    client.execute(query, [zipcode], {prepare: true}).then(function(result) {
+        console.log('after execute and before for');
         for(var i = 0; i < result.rows.length; i++){
             row = result.rows[i];
             console.log('row: ', row);
         }
+        console.log('finished printing');
         res.write(JSON.stringify(row));
         res.end();
         console.log('Shutting down');
         client.shutdown();
-    }
-
-
-    /*execQueryOnZipcode(zipcode)
-        .then(result => {
-            res.write(result);
-            res.end();
-        })
-        .catch(err => {
-
-        });*/
+    })
 }).listen(8000);
 
 console.log("listening on port 8000")
