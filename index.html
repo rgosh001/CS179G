@@ -601,11 +601,11 @@
                             var details = '<div id="content">'+
                                             '<div id="siteNotice">'+
                                             '</div>'+
-                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.zipCode + '</h3>'+
+                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item[0].zipcode + '</h3>'+
                                             '<div id="bodyContent">'+
-                                            '<p><b>Population: </b>' + item.pop + '<br>'+
-                                            '<b>Number of Doctors: </b>' + item.numberofdoctors + '<br>' +
-                                            '<b>Ratio: </b>' + item.ratio + '</p>' +
+                                            '<p><b>Population: </b>' + item[0].pop + '<br>'+
+                                            '<b>Number of Doctors: </b>' + item[0].numberofdoctors + '<br>' +
+                                            '<b>Ratio: </b>' + item[0].ratio + '</p>' +
                                             '</div>'+
                                             '</div>';
                             bindInfoWindow(marker, resultsMap, infowindow, details);
