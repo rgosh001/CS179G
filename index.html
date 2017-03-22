@@ -776,8 +776,18 @@
                             var details = '<div id="content">'+
                                             '<div id="siteNotice">'+
                                             '</div>'+
+<<<<<<< HEAD
                                             '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + address + '</h3>'+
                                             '<div id="bodyContent">';
+=======
+                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item[0].zipcode + '</h3>'+
+                                            '<div id="bodyContent">'+
+                                            '<p><b>Population: </b>' + item[0].pop + '<br>'+
+                                            '<b>Number of Doctors: </b>' + item[0].numberofdoctors + '<br>' +
+                                            '<b>Ratio: </b>' + item[0].ratio + '</p>' +
+                                            '</div>'+
+                                            '</div>';
+>>>>>>> f2855a7... myco yes
                             bindInfoWindow(marker, resultsMap, infowindow, details);
                             markers.push(marker);
                         }
