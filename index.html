@@ -593,24 +593,24 @@
                         var json = req.responseText;
                         if(json != ""){
                             console.log('starting zipcode marker with info: ' + req.ResponseText);
-                            var item = JSON.parse("[" + json + "]");
                             console.log(item);
-                            console.log(item[0].zipcode);
 
-                            console.log('FOUND MATCHING ZIPCODE TRIOTWIOJ');
-                            var details = '<div id="content">'+
-                                            '<div id="siteNotice">'+
-                                            '</div>'+
-                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item[0].zipcode + '</h3>'+
-                                            '<div id="bodyContent">'+
-                                            '<p><b>Population: </b>' + item[0].pop + '<br>'+
-                                            '<b>Number of Doctors: </b>' + item[0].numberofdoctors + '<br>' +
-                                            '<b>Ratio: </b>' + item[0].ratio + '</p>' +
-                                            '</div>'+
-                                            '</div>';
-                            bindInfoWindow(marker, resultsMap, infowindow, details);
-                            markers.push(marker);
-                            exit;
+                            for(var i = 0; i < item.length; i++){                            
+                                console.log('FOUND MATCHING ZIPCODE and i = ', i);
+                                var details = '<div id="content">'+
+                                                '<div id="siteNotice">'+
+                                                '</div>'+
+                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item[i].zipcode + '</h3>'+
+                                                '<div id="bodyContent">'+
+                                                '<p><b>Population: </b>' + item[i].pop + '<br>'+
+                                                '<b>Number of Doctors: </b>' + item[i].numberofdoctors + '<br>' +
+                                                '<b>Ratio: </b>' + item[i].ratio + '</p>' +
+                                                '</div>'+
+                                                '</div>';
+                                bindInfoWindow(marker, resultsMap, infowindow, details);
+                                markers.push(marker);
+                                exit;
+                            }
                         }
                         if(json == ""){
                             alert('No Hospital(s) In Provided Dataset');
