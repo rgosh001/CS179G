@@ -591,6 +591,7 @@
                 req.onreadystatechange = function() {
                     if (req.readyState == 4 && req.status == 200) {
                         var jsonReq = req.responseText;
+                        JSON.stringify(jsonReq);
                         console.log('starting zipcode marker with info: ' + req.responseText);
                         $.parseJSON(jsonReq, function(json1) {
                             var found = 0;
