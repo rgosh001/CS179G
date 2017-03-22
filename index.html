@@ -584,8 +584,8 @@
                                 position: results[0].geometry.location
                             });
                 // talk to node
-                console.log('localhost:8000/' + address);
-                var url = 'localhost:8000/' + address;
+                console.log('http://localhost:8000/' + address);
+                var url = 'http://localhost:8000/' + address;
                 console.log('searching at', url);
                 var req = new XMLHttpRequest();
                 req.onreadystatechange = function() {
@@ -627,7 +627,7 @@
                                 bindInfoWindow(marker, resultsMap, infowindow, details);
                                 markers.push(marker);
                             }
-                        });                            
+                        });
                     }
                 }
                 req.open('GET', url, false);
