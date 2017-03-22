@@ -592,11 +592,11 @@
                     if (req.readyState == 4 && req.status == 200) {
 
 
-                        var jsonReq = req.responseText;
-                        JSON.stringify(jsonReq);
-                        console.log('starting zipcode marker with info: ' + req.responseText);
-                        console.log(jsonReq[0].zipcode);
-
+                        var jsonReq = JSON.stringify(req.responseText);
+                        console.log('starting zipcode marker with info: ' + jsonReq);
+                        //console.log(jsonReq[0].zipcode);
+                        item = JSON.parse(jsonReq);
+                        console.log(jsonReq.zipcode);
 
                         // $.parseJSON(jsonReq, function(json1) {
                         //     var found = 0;
@@ -634,7 +634,7 @@
                         //         markers.push(marker);
                         //     }
                         // });
-                        
+
 
 
                     }
