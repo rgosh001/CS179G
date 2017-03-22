@@ -590,39 +590,29 @@
                 var req = new XMLHttpRequest();
                 req.onreadystatechange = function() {
                     if (req.readyState == 4 && req.status == 200) {
+                        var json = req.responseText;
+                        if(json != ""){
+                            console.log('starting zipcode marker with info: ' + req.ResponseText);
+                            var item = JSON.parse("[" + json + "]");
+                            console.log(item);
+                            console.log(item[0].zipcode);
 
-
-                        var json = '[' + req.responseText + ']';
-                        console.log('starting zipcode marker with info: ' + req.ResponseText);
-                        item = JSON.parse(json);
-                        console.log(item);
-                        console.log(item[0].zipcode);
-
-                        var found = 0;
-                        console.log('INSIDE parseJSON hashmap');
-                        json.map((item) => {
-                            item = JSON.parse(item)
-                            var found = 0;
-                            if(item.zipCode == address){
-                                found = 1;
-                                console.log('FOUND MATCHING ZIPCODE TRIOTWIOJ');
-                                var details = '<div id="content">'+
-                                                '<div id="siteNotice">'+
-                                                '</div>'+
-                                                '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.zipCode + '</h3>'+
-                                                '<div id="bodyContent">'+
-                                                '<p><b>Population: </b>' + item.pop + '<br>'+
-                                                '<b>Number of Doctors: </b>' + item.numberofdoctors + '<br>' +
-                                                '<b>Ratio: </b>' + item.ratio + '</p>' +
-                                                '</div>'+
-                                                '</div>';
-                                bindInfoWindow(marker, resultsMap, infowindow, details);
-                                markers.push(marker);
-                                exit;
-                            }
-                        });
-                        // console.log('finished searching');
-                        if(found == 0){
+                            console.log('FOUND MATCHING ZIPCODE TRIOTWIOJ');
+                            var details = '<div id="content">'+
+                                            '<div id="siteNotice">'+
+                                            '</div>'+
+                                            '<h3 id="firstHeading" class="firstHeading">Zip Code: ' + item.zipCode + '</h3>'+
+                                            '<div id="bodyContent">'+
+                                            '<p><b>Population: </b>' + item.pop + '<br>'+
+                                            '<b>Number of Doctors: </b>' + item.numberofdoctors + '<br>' +
+                                            '<b>Ratio: </b>' + item.ratio + '</p>' +
+                                            '</div>'+
+                                            '</div>';
+                            bindInfoWindow(marker, resultsMap, infowindow, details);
+                            markers.push(marker);
+                            exit;
+                        }
+                        if(json == ""){
                             alert('No Hospital(s) In Provided Dataset');
                             var details = '<div id="content">'+
                                             '<div id="siteNotice">'+
@@ -632,9 +622,6 @@
                             bindInfoWindow(marker, resultsMap, infowindow, details);
                             markers.push(marker);
                         }
-
-
-
                     }
                 }
                 req.open('GET', url, false);
