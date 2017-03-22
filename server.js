@@ -40,8 +40,8 @@ var server = http.createServer(function (req, res) {
         console.log('finished printing');
         res.write(JSON.stringify(row));
         res.end();
-        console.log('Shutting down');
-        client.shutdown();
+        //console.log('Shutting down');
+        //client.shutdown();
     })
 }).listen(8000);
 

@@ -592,11 +592,13 @@
                     if (req.readyState == 4 && req.status == 200) {
 
 
-                        var jsonReq = JSON.stringify(req.responseText);
-                        console.log('starting zipcode marker with info: ' + jsonReq);
+                        //var jsonReq = JSON.stringify(req.responseText);
+                        var json = '[' + req.responseText + ']';
+                        console.log('starting zipcode marker with info: ' + req.ResponseText);
                         //console.log(jsonReq[0].zipcode);
-                        item = JSON.parse(jsonReq);
-                        console.log(jsonReq.zipcode);
+                        item = JSON.parse(json);
+                        console.log(item);
+                        console.log(item[0].zipcode);
 
                         // $.parseJSON(jsonReq, function(json1) {
                         //     var found = 0;
