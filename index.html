@@ -594,13 +594,13 @@
                         console.log('starting zipcode marker with info: ' + req.responseText);
                         $.parseJSON(jsonReq, function(json1) {
                             var found = 0;
-                            // console.log('searching JSON for matching zipcode');
+                            console.log('INSIDE parseJSON hashmap');
                             json1.map((item) => {
                                 item = JSON.parse(item)
                                 var found = 0;
                                 if(item.ZipCode == address){
                                     found = 1;
-                                    // console.log('found matching zipcode');
+                                    console.log('FOUND MATCHING ZIPCODE TRIOTWIOJ');
                                     var details = '<div id="content">'+
                                                     '<div id="siteNotice">'+
                                                     '</div>'+
