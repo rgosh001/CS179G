@@ -1,11 +1,11 @@
 # Nocturnal
-![ss][misc/ss.png]
+![ss](misc/ss.png)
 
 CS179G Project in Computer Science: Bigdata Analysis Winter 2017
 
 Hospitals and Providers Density Heatmap
 
-##Technologies Used##
+## Technologies Used ##
 
 * Apache
 * DataStax
